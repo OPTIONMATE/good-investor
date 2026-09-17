@@ -1,0 +1,172 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+
+*.md
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+
+
+
+# import { NextResponse } from "next/server";
+# import { cookies } from "next/headers";
+# import { verifyToken } from "@/app/lib/jwt";
+# import connectDB from "@/app/lib/db";
+# import User from "@/app/lib/models/User";
+# import Agreement from "@/app/lib/models/Agreement";
+# import { uploadToCloudinary, deleteFromCloudinary } from "@/app/lib/cloudinary";
+
+# async function requireAdmin() {
+#   const cookieStore = cookies();
+#   const token = cookieStore.get("token")?.value;
+
+#   if (!token) throw new Error("Unauthorized");
+
+#   let decoded;
+#   try {
+#     decoded = verifyToken(token);
+#   } catch {
+#     throw new Error("Invalid token");
+#   }
+
+#   await connectDB();
+#   const user = await User.findById(decoded.id).select("role");
+#   if (!user || user.role !== "admin") throw new Error("Admin access required");
+
+#   return user;
+# }
+
+# // 📌 GET — List latest agreements
+# export async function GET() {
+#   try {
+#     await requireAdmin();
+#     await connectDB();
+
+#     const agreements = await Agreement.find()
+#       .select("version pdfUrl createdAt _id cloudinaryPublicId isActive")
+#       .sort({ version: -1 })
+#       .lean();
+
+#     return NextResponse.json({ agreements });
+#   } catch (err) {
+#     return NextResponse.json(
+#       { message: err.message },
+#       { status: err.message.includes("Unauthorized") ? 403 : 500 }
+#     );
+#   }
+# }
+
+# // 📌 POST — Upload new agreement (versioning)
+# export async function POST(request) {
+#   try {
+#     await requireAdmin();
+#     await connectDB();
+
+#     const formData = await request.formData();
+#     const file = formData.get("file"); // make sure input name is "file"
+
+#     if (!file) {
+#       return NextResponse.json({ message: "File is required" }, { status: 400 });
+#     }
+
+#     const bytes = await file.arrayBuffer();
+#     const buffer = Buffer.from(bytes);
+#     const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+
+#     // Upload PDF to Cloudinary as image/pdf
+#     const cloudinaryResult = await uploadToCloudinary(buffer, safeName, "trademilaan/agreements");
+
+#     // Determine version number
+#     const last = await Agreement.findOne().sort({ version: -1 });
+#     const newVersion = last ? last.version + 1 : 1;
+
+#     // Save to DB
+#     const agreement = await Agreement.create({
+#       version: newVersion,
+#       pdfUrl: cloudinaryResult.url,   // from updated cloudinary.js
+#       cloudinaryPublicId: cloudinaryResult.publicId,
+#     });
+
+#     return NextResponse.json({
+#       message: "Agreement uploaded successfully",
+#       agreement,
+#     });
+#   } catch (err) {
+#     console.error("UPLOAD ERROR:", err);
+#     return NextResponse.json({ message: "Failed to upload" }, { status: 500 });
+#   }
+# }
+
+# // 📌 DELETE — Remove agreement by ID
+# export async function DELETE(request) {
+#   try {
+#     await requireAdmin();
+#     await connectDB();
+
+#     const { searchParams } = new URL(request.url);
+#     const id = searchParams.get("id");
+
+#     if (!id) {
+#       return NextResponse.json({ message: "Agreement ID required" }, { status: 400 });
+#     }
+
+#     const agreement = await Agreement.findById(id);
+#     if (!agreement) {
+#       return NextResponse.json({ message: "Not found" }, { status: 404 });
+#     }
+
+#     // Delete from cloudinary
+#     await deleteFromCloudinary(agreement.cloudinaryPublicId);
+
+#     // Delete DB record
+#     await Agreement.findByIdAndDelete(id);
+
+#     return NextResponse.json({ message: "Deleted successfully" });
+#   } catch (err) {
+#     return NextResponse.json(
+#       { message: err.message },
+#       { status: err.message.includes("Unauthorized") ? 403 : 500 }
+#     );
+#   }
+# }
+
+
+opencode.json
