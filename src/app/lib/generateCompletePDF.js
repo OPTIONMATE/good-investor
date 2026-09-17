@@ -91,9 +91,9 @@ export async function generateCompleteAgreementPDF(agreementData) {
     const agreementStartDateDisplay = formatDate(planStartDate);
     const agreementEndDateDisplay = formatDate(planEndDate);
 
-    const raName = "Sasikumar Peyyala"; // agreementData.raName || "RA NAME";
+    const raName = "Eeda Damodara Rao"; // agreementData.raName || "RA NAME";
 
-    let raNumber = "INH000019327";
+    let raNumber = "INH000024967";
     /** Constant RA / firm identifiers (not per-user) */
     const raRegistrationDate = "07-January-2025";
 
@@ -778,13 +778,13 @@ export async function generateCompleteAgreementPDF(agreementData) {
     );
     drawWrappedText(`Name: ${raName} `, 11, 0, false, 2);
     drawWrappedText(
-      `Email: spkumar.researchanalyst@gmail.com `,
+      `Email: damu.researchanalyst@gmail.com `,
       11,
       0,
       false,
       2,
     );
-    drawWrappedText(`Phone: +91 77022 62206 `, 11, 0, false, 2);
+    drawWrappedText(`Phone: +91 97046 48777 `, 11, 0, false, 2);
     drawWrappedText(
       `Complaints will be addressed within 7 business days or as per SEBI timelines. Unresolved complaints can be escalated to SEBI through:`,
       11,
@@ -844,7 +844,7 @@ export async function generateCompleteAgreementPDF(agreementData) {
       2,
     );
     drawWrappedText(
-      `(b) Any disputes will be subject to the exclusive jurisdiction of courts located in VIJAYAWADA, ANDHRA PRADESH.`,
+      `(b) Any disputes will be subject to the exclusive jurisdiction of courts located in HYDERABAD, TELANGANA.`,
       11,
       0,
       false,
@@ -944,8 +944,8 @@ export async function generateCompleteAgreementPDF(agreementData) {
     addSpace(8);
     drawSectionHeading("20. Money Laundering Reporting Officer (MLRO)");
     drawWrappedText(`Name: ${raName}`);
-    drawWrappedText("Phone: +91 77022 62206");
-    drawWrappedText("Mail: spkumar.researchanalyst@gmail.com");
+    drawWrappedText("Phone: +91 97046 48777");
+    drawWrappedText("Mail: damu.researchanalyst@gmail.com");
     addSpace(8);
     drawSectionHeading("21. Additional Information");
     drawWrappedText(

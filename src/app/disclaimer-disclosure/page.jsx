@@ -8,9 +8,9 @@ import OwnershipConflicts from "@/app/components/disclaimer/OwnershipConflicts";
 import AIToolsSection from "@/app/components/disclaimer/AIToolsSection";
 
 export const metadata = {
-  title: "Disclaimer & Disclosure - trademilaan",
+  title: "Disclaimer & Disclosure - Good Investor",
   description:
-    "Important disclaimers, risk disclosures, and material information for trademilaan clients.",
+    "Important disclaimers, risk disclosures, and material information for Good Investor clients.",
 };
 
 export default function DisclaimerPage() {

@@ -68,14 +68,14 @@ const HeaderBlock = () => (
       <span aria-hidden="true">📊</span>
     </div>
     <h2 className="mb-12 text-4xl font-semibold leading-tight text-neutral-900">
-      trademilaan.{" "}
+      Good Investor.{" "}
       <span className="text-slate-500 font-normal">
         AI-Powered Market Insights for Smarter Trading.
       </span>
     </h2>
     <a
       href="/contact"
-      aria-label="Contact trademilaan for more information about our services"
+      aria-label="Contact Good Investor for more information about our services"
       className="flex items-center gap-2 text-[#6d5bff] font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6d5bff]"
     >
       Contact us <FiArrowRight aria-hidden="true" />
@@ -152,7 +152,7 @@ const LocationBlock = () => (
   <Block className="col-span-12 flex flex-col items-center gap-4 md:col-span-3">
     <FiMapPin className="text-3xl text-[#6d5bff]" aria-hidden="true" />
     <p className="text-center text-lg text-slate-600">
-      Vijayawada, Andhra Pradesh
+      Hyderabad, Telangana
     </p>
   </Block>
 );

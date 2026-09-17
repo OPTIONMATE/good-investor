@@ -21,7 +21,7 @@ export default function RefundPolicy() {
       {/* ===== Content ===== */}
       <div className="max-w-5xl mx-auto px-6 py-14 space-y-8 text-gray-800 leading-relaxed">
         <p>
-          At <b>trademilaan</b>, we believe in transparency and fairness when it
+          At <b>Good Investor</b>, we believe in transparency and fairness when it
           comes to the fees you pay for our research and advisory services.
           Please read the following refund policy carefully before subscribing
           to our services:

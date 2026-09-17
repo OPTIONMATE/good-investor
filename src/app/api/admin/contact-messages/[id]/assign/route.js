@@ -6,7 +6,7 @@ import { verifyAuth, isAdminUser } from "@/app/lib/auth/tokenUtils";
 import { transporter } from "@/app/lib/mailer";
 
 const CONTACT_RECEIVER_EMAIL =
-  process.env.CONTACT_RECEIVER_EMAIL || "spkumar.researchanalyst@gmail.com";
+  process.env.CONTACT_RECEIVER_EMAIL || "damu.researchanalyst@gmail.com";
 
 async function logActivity(ticketId, action, changedBy, oldValue, newValue, description) {
   try {

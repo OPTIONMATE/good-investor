@@ -8,13 +8,13 @@ export default function ReportSection() {
     {
       icon: FiMail,
       label: "Email",
-      value: "spkumar.researchanalyst@gmail.com",
+      value: "damu.researchanalyst@gmail.com",
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: FiPhone,
       label: "Contact Number",
-      value: "+91 770 226 2206",
+      value: "+91 97046 48777",
       color: "from-emerald-500 to-teal-500",
     },
   ];

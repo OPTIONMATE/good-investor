@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "Accessibility Statement - trademilaan",
+  title: "Accessibility Statement - Good Investor",
   description:
-    "trademilaan accessibility commitment, WCAG 2.1 compliance goal, and how to report accessibility issues.",
+    "Good Investor accessibility commitment, WCAG 2.1 compliance goal, and how to report accessibility issues.",
 };
 
 export default function AccessibilityPage() {
@@ -17,7 +17,7 @@ export default function AccessibilityPage() {
         <section>
           <h2 className="text-2xl font-bold mb-3">Our Commitment</h2>
           <p>
-            trademilaan is committed to ensuring digital accessibility for people
+            Good Investor is committed to ensuring digital accessibility for people
             with disabilities. We continually improve the user experience for
             everyone and apply relevant accessibility standards so that our
             website can be used by the widest possible audience.
@@ -56,13 +56,13 @@ export default function AccessibilityPage() {
             <li>
               Email:{" "}
               <a
-                href="mailto:spkumar.researchanalyst@gmail.com"
+                href="mailto:damu.researchanalyst@gmail.com"
                 className="text-blue-700 underline"
               >
-                spkumar.researchanalyst@gmail.com
+                damu.researchanalyst@gmail.com
               </a>
             </li>
-            <li>Phone: +91 7702262206</li>
+            <li>Phone: +91 9704648777</li>
           </ul>
           <p className="mt-3">
             When contacting us, please describe the page or feature you were

@@ -10,7 +10,7 @@ export default function GrievanceRedressal() {
 
       <div className="max-w-6xl mx-auto px-6 py-14 space-y-10 text-gray-800 leading-relaxed">
         <p>
-          At <b>trademilaan</b>, we are committed to addressing investor
+          At <b>Good Investor</b>, we are committed to addressing investor
           concerns in a fair, transparent, and timely manner. Below are the
           details of our grievance redressal mechanism in accordance with SEBI
           guidelines.
@@ -20,7 +20,7 @@ export default function GrievanceRedressal() {
           <h2 className="text-2xl font-bold mb-4">SEBI Registration Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <p>
-              <b>Registered Name:</b> Sasikumar Peyyala
+              <b>Registered Name:</b> Eeda Damodara Rao
             </p>
             <p>
               <b>Trade Name / Website:</b> www.trademilaan.com
@@ -29,7 +29,7 @@ export default function GrievanceRedressal() {
               <b>Type of Registration:</b> Research Analyst
             </p>
             <p>
-              <b>Registration No:</b> INH000019327
+              <b>Registration No:</b> INH000024967
             </p>
             <p>
               <b>Validity:</b> Jan 07, 2025 – Perpetual
@@ -51,14 +51,12 @@ export default function GrievanceRedressal() {
         <section>
           <h2 className="text-2xl font-bold mb-4">Office Addresses</h2>
           <p>
-            <b>Registered Office:</b> 1 24,29 4 Kummaripalem Centerr, Near D S
-            M, High School, Vidyadharapuram, Vijayawada, VIJAYAWADA, ANDHRA
-            PRADESH, 520012
+            <b>Registered Office:</b> T2601, MY HOME TRIDASA, TELLAPUR, SANGA
+            REDDY, HYDERABAD, TELANGANA, 502032
           </p>
           <p className="mt-2">
-            <b>Correspondence Office:</b> 1 24,29 4 Kummaripalem Centerr, Near D
-            S M, High School, Vidyadharapuram, Vijayawada, VIJAYAWADA, ANDHRA
-            PRADESH, 520012
+            <b>Correspondence Office:</b> T2601, MY HOME TRIDASA, TELLAPUR, SANGA
+            REDDY, HYDERABAD, TELANGANA, 502032
           </p>
         </section>
 
@@ -66,20 +64,20 @@ export default function GrievanceRedressal() {
           <h2 className="text-2xl font-bold mb-4">Key Officials & Contacts</h2>
           <div className="space-y-2">
             <p>
-              <b>CEO:</b> Sasikumar Peyyala | 📞 +91 77022 62206 | ✉️
-              spkumar.researchanalyst@gmail.com
+              <b>CEO:</b> Eeda Damodara Rao | 📞 +91 97046 48777 | ✉️
+              damu.researchanalyst@gmail.com
             </p>
             <p>
-              <b>Principal Officer:</b> Sasikumar Peyyala | 📞 +91 77022 62206 |
-              ✉️ spkumar.researchanalyst@gmail.com
+              <b>Principal Officer:</b> Eeda Damodara Rao | 📞 +91 97046 48777 |
+              ✉️ damu.researchanalyst@gmail.com
             </p>
             <p>
-              <b>Compliance Officer:</b> Sasikumar Peyyala | 📞 +91 77022 62206
-              | ✉️ spkumar.researchanalyst@gmail.com
+              <b>Compliance Officer:</b> Eeda Damodara Rao | 📞 +91 97046 48777
+              | ✉️ damu.researchanalyst@gmail.com
             </p>
             <p>
-              <b>Head – Customer Support:</b> Sasikumar Peyyala | 📞 +91 77022
-              62206 | ✉️ spkumar.researchanalyst@gmail.com
+              <b>Head – Customer Support:</b> Eeda Damodara Rao | 📞 +91 97046
+              48777 | ✉️ damu.researchanalyst@gmail.com
             </p>
           </div>
         </section>
@@ -96,10 +94,10 @@ export default function GrievanceRedressal() {
             Support is unavailable on weekends and public holidays. You may
             still write to us at{" "}
             <a
-              href="mailto:spkumar.researchanalyst@gmail.com"
+              href="mailto:damu.researchanalyst@gmail.com"
               className="text-blue-600 underline"
             >
-              spkumar.researchanalyst@gmail.com
+              damu.researchanalyst@gmail.com
             </a>
             .
           </p>
@@ -111,12 +109,12 @@ export default function GrievanceRedressal() {
             If you are dissatisfied with our services, kindly raise your initial
             complaint to{" "}
             <a
-              href="mailto:spkumar.researchanalyst@gmail.com"
+              href="mailto:damu.researchanalyst@gmail.com"
               className="text-blue-600 underline"
             >
-              spkumar.researchanalyst@gmail.com
+              damu.researchanalyst@gmail.com
             </a>{" "}
-            or contact <b>+91 7702262206</b>.
+            or contact <b>+91 9704648777</b>.
           </p>
           <p className="mt-2">
             If unresolved after 7 days, you may escalate to SEBI through:
@@ -200,7 +198,7 @@ export default function GrievanceRedressal() {
           </h2>
           <p>
             Ensure that RA service fees are paid only to the bank account of the
-            registered Research Analyst “Sasikumar Peyyala” or through verified
+            registered Research Analyst “Eeda Damodara Rao” or through verified
             payment gateways / CeFCoM. Payments outside these channels will not
             be considered valid.
           </p>

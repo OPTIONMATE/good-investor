@@ -54,7 +54,7 @@ export function Navbar() {
             onClick={closeMobile}
           >
             <p className="text-md sm:text-base md:text-lg font-semibold leading-tight truncate">
-              Trademilaan
+              Good Investor
             </p>
           </Link>
         </div>

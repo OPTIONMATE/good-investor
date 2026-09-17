@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 const services = [
   {
     label: "Equity",
-    title: "trademilaan Equity Pro",
+    title: "Good Investor Equity Pro",
     description:
       "AI-driven equity strategies with disciplined risk and consistent alpha hunting.",
     image: "/equity.jpeg",
@@ -19,7 +19,7 @@ const services = [
   },
   {
     label: "options",
-    title: "trademilaan Index Options Pro",
+    title: "Good Investor Index Options Pro",
     description:
       "Precision option structures to navigate volatility with conviction.",
     image: "/options.jpg",
@@ -33,7 +33,7 @@ const services = [
   },
   {
     label: "Commodities",
-    title: "trademilaan Commodities Pro",
+    title: "Good Investor Commodities Pro",
     description:
       "Macro + data-backed insights for metals and energy momentum swings.",
     image: "/commodities.webp",

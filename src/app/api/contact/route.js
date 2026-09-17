@@ -227,14 +227,14 @@ export async function POST(request) {
                 <td style="padding:20px;color:#111827;">
                   <p style="margin:0 0 10px;font-size:14px;">Dear ${escapeHtml(name)},</p>
                   <p style="margin:0 0 14px;font-size:14px;line-height:1.7;color:#374151;">
-                    Thank you for contacting Trademilaan. Our support team has received your message and will get back to you shortly.
+                    Thank you for contacting Good Investor. Our support team has received your message and will get back to you shortly.
                   </p>
                   <div style="padding:12px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:8px;">
                     <p style="margin:0 0 6px;font-size:13px;color:#6b7280;">Reference ID</p>
                     <p style="margin:0;font-size:15px;font-weight:700;color:#111827;">${escapeHtml(referenceId)}</p>
                   </div>
                   <p style="margin:14px 0 0;font-size:13px;color:#6b7280;">
-                    For urgent queries, call <a href="tel:+917702262206" style="color:#15803d;text-decoration:none;font-weight:600;">+91 77022 62206</a>
+                    For urgent queries, call <a href="tel:+919704648777" style="color:#15803d;text-decoration:none;font-weight:600;">+91 97046 48777</a>
                     or email <a href="mailto:${receiverMail}" style="color:#15803d;text-decoration:none;font-weight:600;">${receiverMail}</a>.
                   </p>
                 </td>
@@ -245,7 +245,7 @@ export async function POST(request) {
       </table>
     `;
 
-    const ackText = `Dear ${name},\n\nThank you for contacting Trademilaan.\n\nWe have received your message and will get back to you shortly.\nReference ID: ${referenceId}\n\nFor urgent queries, call +91 77022 62206 or email ${CONTACT_RECEIVER_EMAIL}.`;
+    const ackText = `Dear ${name},\n\nThank you for contacting Good Investor.\n\nWe have received your message and will get back to you shortly.\nReference ID: ${referenceId}\n\nFor urgent queries, call +91 97046 48777 or email ${CONTACT_RECEIVER_EMAIL}.`;
 
     await transporter.sendMail({
       from: fromAddress,

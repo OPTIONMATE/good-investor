@@ -1,9 +1,9 @@
 import AuthForm from "../components/AuthForm";
 
 export const metadata = {
-  title: "Login - trademilaan",
+  title: "Login - Good Investor",
   description:
-    "Login to your trademilaan account to access premium trading insights and services.",
+    "Login to your Good Investor account to access premium trading insights and services.",
 };
 
 export default function LoginPage() {

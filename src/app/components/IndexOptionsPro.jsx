@@ -8,7 +8,7 @@ export default function IndexOptionsPro() {
       <div>
         <Image
           src="/service2.jpg"
-          alt="trademilaan Index Options Pro"
+          alt="Good Investor Index Options Pro"
           width={600}
           height={400}
           className="rounded-2xl w-full h-auto object-cover"
@@ -18,7 +18,7 @@ export default function IndexOptionsPro() {
       {/* Content */}
       <div>
         <h2 className="text-3xl font-bold mb-4">
-          trademilaan Index Options Pro
+          Good Investor Index Options Pro
         </h2>
 
         <h4 className="italic underline mb-4 font-semibold">

@@ -1,4 +1,4 @@
-// File: trademilaan/src/pages/ContactPage.jsx
+// File: good-investor/src/pages/ContactPage.jsx
 import React from "react";
 import ContactHero from "@/components/ContactHero";
 import ContactDetails from "@/components/ContactDetails";

@@ -6,7 +6,7 @@ export default function MITCContent() {
           <p className="leading-relaxed">
             The following are the Most Important Terms & Conditions (MITC)
             governing your subscription to the research/advisory services
-            provided by Trade Milaan, a SEBI-registered Research Analyst. By
+            provided by Good Investor, a SEBI-registered Research Analyst. By
             subscribing to our services, you agree to the following:
           </p>
 
@@ -152,8 +152,8 @@ export default function MITCContent() {
               8. Complaint Redressal
             </h2>
             <ul className="list-disc list-inside space-y-2">
-              <li>Email: spkumar.researchanalyst@gmail.com</li>
-              <li>Phone: +91 770 226 2206</li>
+              <li>Email: damu.researchanalyst@gmail.com</li>
+              <li>Phone: +91 970 464 8777</li>
               <li>
                 Complaints will be acknowledged within 2 working days and
                 resolved within 30 days.

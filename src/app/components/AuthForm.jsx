@@ -251,7 +251,7 @@ export default function AuthForm({ type }) {
 
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-4 pb-16 pt-28 md:px-8">
         <h1 className="sr-only">
-          {type === "login" ? "Login to trademilaan" : "Create your trademilaan account"}
+          {type === "login" ? "Login to Good Investor" : "Create your Good Investor account"}
         </h1>
         <div className="grid items-center gap-8 rounded-3xl border border-neutral-200/70 bg-white/80 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.08)] backdrop-blur lg:grid-cols-2 lg:p-10">
           <div className="space-y-8">

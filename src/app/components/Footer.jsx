@@ -17,17 +17,17 @@ const Footer = () => {
 
   const socialLinks = [
     {
-      name: "Follow trademilaan on Facebook",
+      name: "Follow Good Investor on Facebook",
       icon: "M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z",
       url: "https://www.facebook.com/trademilaan",
     },
     {
-      name: "Follow trademilaan on Twitter",
+      name: "Follow Good Investor on Twitter",
       icon: "M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z",
       url: "https://twitter.com/trademilaan",
     },
     {
-      name: "Follow trademilaan on YouTube",
+      name: "Follow Good Investor on YouTube",
       icon: "M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z",
       url: "https://www.youtube.com/@trademilaan",
     },
@@ -49,7 +49,7 @@ const Footer = () => {
           >
             <h2 className="text-2xl font-bold mb-4 text-white">About Us</h2>
             <p className="text-white leading-relaxed text-sm">
-              Sasikumar Peyyala is a SEBI-registered research analyst with a
+              Eeda Damodara Rao is a SEBI-registered research analyst with a
               deep passion for AI and machine learning-driven trading
               strategies. With over nine years of experience in financial
               markets.
@@ -117,15 +117,15 @@ const Footer = () => {
           >
             <h2 className="text-2xl font-bold mb-4 text-white">Contact Us</h2>
             <div className="space-y-3 text-sm">
-              <a href="tel:07702262206" className={linkClass}>
-                7702262206
+              <a href="tel:9704648777" className={linkClass}>
+                9704648777
               </a>
-              <a href="mailto:spkumar.researchanalyst@gmail.com" className={`${linkClass} break-all`}>
-                spkumar.researchanalyst@gmail.com
+              <a href="mailto:damu.researchanalyst@gmail.com" className={`${linkClass} break-all`}>
+                damu.researchanalyst@gmail.com
               </a>
               <p className="text-white leading-relaxed">
-                1 24,29 4 Kummaripalem Centerr, Near D S M, High School,
-                Vidyadharapuram, Vijayawada, VIJAYAWADA, ANDHRA PRADESH, 520012
+                T2601, MY HOME TRIDASA, TELLAPUR, SANGA REDDY, HYDERABAD,
+                TELANGANA, 502032
               </p>
             </div>
           </motion.div>
@@ -141,19 +141,19 @@ const Footer = () => {
                 Read our full accessibility statement
               </Link>
               {" "}or email{" "}
-              <a href="mailto:spkumar.researchanalyst@gmail.com" className="underline hover:opacity-90">
-                spkumar.researchanalyst@gmail.com
+              <a href="mailto:damu.researchanalyst@gmail.com" className="underline hover:opacity-90">
+                damu.researchanalyst@gmail.com
               </a>{" "}
               to report an issue.
             </p>
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white">
             <p className="text-center md:text-left">
-              trademilaan Copyright©{currentYear}. All Right Reserved.
+              Good Investor Copyright©{currentYear}. All Right Reserved.
             </p>
             <p className="text-center md:text-right">
               Design & Developed by{" "}
-              <span className="font-semibold">trademilaan</span>
+              <span className="font-semibold">Good Investor</span>
             </p>
           </div>
         </div>

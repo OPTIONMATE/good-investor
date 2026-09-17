@@ -152,7 +152,7 @@ export async function generateInvoicePDF(invoiceData) {
 
   y -= 20;
 
-  page.drawText("Sasikumar Peyyala", {
+  page.drawText("Eeda Damodara Rao", {
     x: margin,
     y,
     size: 22,
@@ -170,7 +170,7 @@ export async function generateInvoicePDF(invoiceData) {
 
   y -= 20;
 
-  page.drawText("SEBI® Research Analyst: INH000019327", {
+  page.drawText("SEBI® Research Analyst: INH000024967", {
     x: margin,
     y,
     size: 11,
@@ -445,9 +445,9 @@ export async function generateInvoicePDF(invoiceData) {
     "2. Market Risks may result in partial or permanent losses to your investments or portfolio due to unfavorable market conditions or company-specific events.",
     "3. Past performance does not predict future results.",
     "4. We are SEBI Registered as a 'Research Analyst', not as 'Investment Advisers.'",
-    "5. We do not provide any assurances or guarantees regarding returns on investments or trading. If anyone claims to do so on our behalf, please contact our Compliance Officer through our website or mail: spkumar.researchanalyst@gmail.com for assistance. We are not liable for any consequences arising from such activities, as investing in the securities market carries significant risks.",
-    "6. Sasikumar Peyyala has a designated compliance officer to address all trader/investor complaints. Please send all complaints to spkumar.researchanalyst@gmail.com, and we aim to resolve them within 7 days.",
-    "7. Sasikumar Peyyala is a SEBI registered Research Analyst with registration number INH000019327. We do not offer profit-sharing, PMS-based services, or Demat Account handling services. Our offerings are strictly research-based recommendations available on a prepaid subscription basis.",
+    "5. We do not provide any assurances or guarantees regarding returns on investments or trading. If anyone claims to do so on our behalf, please contact our Compliance Officer through our website or mail: damu.researchanalyst@gmail.com for assistance. We are not liable for any consequences arising from such activities, as investing in the securities market carries significant risks.",
+    "6. Eeda Damodara Rao has a designated compliance officer to address all trader/investor complaints. Please send all complaints to damu.researchanalyst@gmail.com, and we aim to resolve them within 7 days.",
+    "7. Eeda Damodara Rao is a SEBI registered Research Analyst with registration number INH000024967. We do not offer profit-sharing, PMS-based services, or Demat Account handling services. Our offerings are strictly research-based recommendations available on a prepaid subscription basis.",
     "8. We will provide Buy/Sell/Hold ratings and other research-based calls/model portfolios based on Technical and/or Fundamental analysis during the validity period.",
     "9. Investors are encouraged to act in accordance with their risk tolerance, and we do not provide Investment Advisory Services.",
     "10. Please avoid hot or stop-loss measures to mitigate open losses on your investments or portfolio.",
@@ -475,7 +475,7 @@ export async function generateInvoicePDF(invoiceData) {
     color: pastel.contactLabel,
   });
 
-  page.drawText("+91 77022 62206", {
+  page.drawText("+91 97046 48777", {
     x: 90,
     y: contactY,
     size: 10,
@@ -491,7 +491,7 @@ export async function generateInvoicePDF(invoiceData) {
     color: pastel.contactLabel,
   });
 
-  page.drawText("spkumar.researchanalyst@gmail.com", {
+  page.drawText("damu.researchanalyst@gmail.com", {
     x: 260,
     y: contactY,
     size: 10,
@@ -508,7 +508,7 @@ export async function generateInvoicePDF(invoiceData) {
   });
 
   drawWrappedText(
-    "1 24,29 4 Kummaripalem Centerr, Near D S M, High School, Vidyadharapuram, Vijayawada, VIJAYAWADA,ANDHRA PRADESH, 520012",
+    "T2601, MY HOME TRIDASA, TELLAPUR, SANGA REDDY, HYDERABAD, TELANGANA, 502032",
     440,
     contactY - 12,
     8,
@@ -548,7 +548,7 @@ export async function generateInvoicePDF(invoiceData) {
     pastel.footerLeftText,
   );
   blueY = drawWrappedText(
-    "Compliance Team: spkumar.researchanalyst@gmail.com",
+    "Compliance Team: damu.researchanalyst@gmail.com",
     15,
     blueY - 5,
     9,
@@ -557,7 +557,7 @@ export async function generateInvoicePDF(invoiceData) {
     pastel.footerLeftText,
   );
   drawWrappedText(
-    "Phone: +91 77022 62206",
+    "Phone: +91 97046 48777",
     15,
     blueY - 5,
     9,

@@ -30,10 +30,10 @@ export default function ContactDetails() {
                 Phone
               </h3>
               <a
-                href="tel:7702262206"
+                href="tel:9704648777"
                 className="text-lg text-neutral-900 hover:text-purple-600 transition-colors"
               >
-                +91 77022 62206
+                +91 97046 48777
               </a>
             </div>
           </div>
@@ -60,10 +60,10 @@ export default function ContactDetails() {
                 Email
               </h3>
               <a
-                href="mailto:spkumar.researchanalyst@gmail.com"
+                href="mailto:damu.researchanalyst@gmail.com"
                 className="text-lg text-neutral-900 hover:text-purple-600 transition-colors break-all"
               >
-                spkumar.researchanalyst@gmail.com
+                damu.researchanalyst@gmail.com
               </a>
             </div>
           </div>
@@ -96,8 +96,8 @@ export default function ContactDetails() {
                 Address
               </h3>
               <p className="text-sm text-neutral-900">
-                1 24,29 4 Kummaripalem Centerr, Near D S M, High School,
-                Vidyadharapuram, Vijayawada, VIJAYAWADA, ANDHRA PRADESH, 520012
+                T2601, MY HOME TRIDASA, TELLAPUR, SANGA REDDY, HYDERABAD,
+                TELANGANA, 502032
               </p>
             </div>
           </div>
@@ -108,14 +108,14 @@ export default function ContactDetails() {
       <div className="bg-white rounded-2xl border border-neutral-200 shadow-[0_20px_40px_rgba(0,0,0,0.08)] overflow-hidden">
         <div className="w-full h-[300px] md:h-[400px]">
           <iframe
-            src="https://maps.google.com/maps?q=1%2024%2C29%204%20Kummaripalem%20Centerr%2C%20Near%20D%20S%20M%2C%20High%20School%2C%20Vidyadharapuram%2C%20Vijayawada%2C%20Andhra%20Pradesh%20520012&z=17&output=embed"
+            src="https://maps.google.com/maps?q=T2601%2C%20MY%20HOME%20TRIDASA%2C%20TELLAPUR%2C%20SANGA%20REDDY%2C%20HYDERABAD%2C%20TELANGANA%20502032&z=17&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0 }}
             allowFullScreen=""
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="trademilaan Location"
+            title="Good Investor Location"
             className="w-full h-full"
           ></iframe>
         </div>
