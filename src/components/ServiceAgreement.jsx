@@ -101,7 +101,7 @@ export default function ServiceAgreement({
     { id: "user-decl", title: "4. Research Report Terms & Conditions" },
     { id: "provider-decl", title: "5. Client Information & KYC" },
     { id: "services", title: "6. Standard Terms of Service & Client Consent" },
-    { id: "obligations", title: "7. Disclosures by Sasikumar Peyyala" },
+    { id: "obligations", title: "7. Disclosures by Eeda Damodara Rao" },
     { id: "risks", title: "8. Payment Terms" },
     { id: "disclaimers", title: "9. Risk Factors" },
     { id: "grievance", title: "10. Additional Warnings and Disclaimers" },
@@ -276,7 +276,7 @@ export default function ServiceAgreement({
             <ul className="space-y-1 ml-4">
               <li>
                 <span className="font-bold">a. Owner / We / Us / Our:</span>{" "}
-                Refers to Sasikumar Peyyala, the SEBI-registered Research
+                Refers to Eeda Damodara Rao, the SEBI-registered Research
                 Analyst entity providing research and advisory services,
                 including its employees and affiliates.
               </li>
@@ -286,11 +286,11 @@ export default function ServiceAgreement({
                   b. User / Client / You / Your:
                 </span>{" "}
                 Any individual or legal entity subscribing to or using the
-                research services provided by Sasikumar Peyyala.
+                research services provided by Eeda Damodara Rao.
               </li>
               <li>
                 <span className="font-bold">c. Parties:</span> Collectively
-                refers to Sasikumar Peyyala and the User/Client.
+                refers to Eeda Damodara Rao and the User/Client.
               </li>
             </ul>
           </div>
@@ -326,12 +326,12 @@ export default function ServiceAgreement({
             <ul className="space-y-1 ml-4">
               <li>
                 (a) Subscription Confirmation: By accepting the research
-                services from Sasikumar Peyyala, you acknowledge voluntary
+                services from Eeda Damodara Rao, you acknowledge voluntary
                 subscription and acceptance of the terms complying with SEBI
                 (Research Analyst) Regulations, 2014.
               </li>
               <li>
-                (b) Regulatory Compliance: Both the Client and Sasikumar Peyyala
+                (b) Regulatory Compliance: Both the Client and Eeda Damodara Rao
                 must comply with all applicable SEBI laws, RA Regulations, and
                 government notifications as amended from time to time.
               </li>
@@ -383,7 +383,7 @@ export default function ServiceAgreement({
                 outcomes.
               </li>
               <li>
-                (j) Sasikumar Peyyala, along with its partners, employees,
+                (j) Eeda Damodara Rao, along with its partners, employees,
                 officers, and affiliates, expressly disclaims any liability for
                 loss or damages arising from unintentional errors or
                 omissions in any information or recommendations contained in the
@@ -404,7 +404,7 @@ export default function ServiceAgreement({
                 fundamental analysis.
               </li>
               <li>
-                (n) Sasikumar Peyyala adheres strictly to SEBI (Research
+                (n) Eeda Damodara Rao adheres strictly to SEBI (Research
                 Analyst) Regulations, 2014, and does not offer investment
                 advisory or PMS (Portfolio Management Services).{" "}
               </li>
@@ -432,7 +432,7 @@ export default function ServiceAgreement({
               <ul className="space-y-1 ml-4">
                 <li>
                   (a) Clients must provide complete and accurate personal and
-                  financial details as required by Sasikumar Peyyala standard
+                  financial details as required by Eeda Damodara Rao standard
                   KYC format.
                 </li>
                 <li>
@@ -504,16 +504,16 @@ export default function ServiceAgreement({
             {/* Section 7: USER OBLIGATIONS */}
             <div id="obligations" className="mb-6 text-sm">
               <h3 className="font-bold text-lg mb-3 pb-2 border-b-2 border-gray-400">
-                6. Disclosures by Sasikumar Peyyala:
+                6. Disclosures by Eeda Damodara Rao:
               </h3>
               <ul className="space-y-1 ml-4">
                 <li>
                   (a) SEBI Registration Name:
-                  <span className="font-bold"> Sasikumar Peyyala</span>{" "}
+                  <span className="font-bold"> Eeda Damodara Rao</span>{" "}
                 </li>
                 <li>
                   (b) SEBI Registration Number:
-                  <span className="font-bold"> INH000019327</span>{" "}
+                  <span className="font-bold"> INH000024967</span>{" "}
                 </li>
                 <li>
                   (c) Registration Date:{" "}
@@ -522,7 +522,7 @@ export default function ServiceAgreement({
                 <li>
                   (d) Trade Name or Website:
                   <span className="font-bold">Jan 07, 2025 </span> (Note:
-                  Official Sasikumar Peyyala Website)
+                  Official Eeda Damodara Rao Website)
                 </li>
                 <li>
                   (f) Maximum fee charged: ₹1.51 Lakhs plus GST per annum (from
@@ -549,7 +549,7 @@ export default function ServiceAgreement({
               <ul className="space-y-1 ml-4">
                 <li>
                   (a) Fees for services must be paid promptly using the
-                  authorized modes and channels prescribed by Sasikumar Peyyala.
+                  authorized modes and channels prescribed by Eeda Damodara Rao.
                 </li>
                 <li>
                   (b) Accepted payment methods and details are available on the
@@ -646,7 +646,7 @@ export default function ServiceAgreement({
             </h3>
             <ul className="space-y-1 ml-4">
               <li>
-                (a) Sasikumar Peyyala fully complies with SEBI’s disclosure and
+                (a) Eeda Damodara Rao fully complies with SEBI’s disclosure and
                 conflict of interest policies.
               </li>
               <li>
@@ -698,18 +698,18 @@ export default function ServiceAgreement({
               </li>
               <li>
                 Name:
-                <span className="font-bold"> Sasikumar Peyyala</span>
+                <span className="font-bold"> Eeda Damodara Rao</span>
               </li>
               <li>
                 Email:
                 <span className="font-bold">
                   {" "}
-                  spkumar.researchanalyst@gmail.com
+                  damu.researchanalyst@gmail.com
                 </span>
               </li>
               <li>
                 Phone:
-                <span className="font-bold"> +91 7702262206</span>
+                <span className="font-bold"> +91 9704648777</span>
               </li>
               <li>
                 Complaints will be addressed within 7 business days or as per
@@ -738,7 +738,7 @@ export default function ServiceAgreement({
             </h3>
             <ul className="space-y-1 ml-4">
               <li>
-                Sasikumar Peyyala reserves the right to suspend or terminate
+                Eeda Damodara Rao reserves the right to suspend or terminate
                 service with or without notice in case of:
               </li>
               <li>(a) Violation of TOS (Terms and Conditions)</li>
@@ -764,7 +764,7 @@ export default function ServiceAgreement({
               </li>
               <li>
                 (b) Any disputes will be subject to the exclusive jurisdiction
-                of courts located in VIJAYAWADA, ANDHRA PRADESH.
+                of courts located in HYDERABAD, TELANGANA.
               </li>
             </ul>
           </div>
@@ -795,7 +795,7 @@ export default function ServiceAgreement({
             </h3>
             <ul className="space-y-1 ml-4">
               <li>
-                (a) You agree to indemnify and hold harmless Sasikumar Peyyala,
+                (a) You agree to indemnify and hold harmless Eeda Damodara Rao,
                 its officers, and employees against all claims arising from your
                 breach of these Terms or misuse of the service.
               </li>
@@ -865,7 +865,7 @@ export default function ServiceAgreement({
               </li>
 
               <li>
-                Assessing the client's business, ownership structure, and
+                Assessing the client&apos;s business, ownership structure, and
                 control patterns to evaluate risk.
               </li>
 
@@ -879,7 +879,7 @@ export default function ServiceAgreement({
 
               <li>
                 Ongoing monitoring of transactions throughout the relationship
-                to ensure alignment with the client's profile, source of funds,
+                to ensure alignment with the client&apos;s profile, source of funds,
                 and risk rating.
               </li>
 
@@ -901,8 +901,8 @@ export default function ServiceAgreement({
                 jurisdiction of the Investment Adviser Regulation.{" "}
               </p>
               <p>
-                To protect everyone's best interests, we will maintain a record
-                of each client's KYC for future reference and report any
+                To protect everyone&apos;s best interests, we will maintain a record
+                of each client&apos;s KYC for future reference and report any
                 suspicious activities to the Financial Intelligence Unit (FIU).
               </p>
             </div>
@@ -916,18 +916,18 @@ export default function ServiceAgreement({
             <ul className="space-y-1 ml-4">
               <li>
                 Name:
-                <span className="font-bold"> Sasikumar Peyyala</span>
+                <span className="font-bold"> Eeda Damodara Rao</span>
               </li>
               <li>
                 Email:
                 <span className="font-bold">
                   {" "}
-                  spkumar.researchanalyst@gmail.com
+                  damu.researchanalyst@gmail.com
                 </span>
               </li>
               <li>
                 Phone:
-                <span className="font-bold"> +91 7702262206</span>
+                <span className="font-bold"> +91 9704648777</span>
               </li>
             </ul>
           </div>
@@ -939,16 +939,16 @@ export default function ServiceAgreement({
               <li>
                 (a) Full terms, disclaimers, disclosures, investor charters,
                 MITC, refund policies, and regulatory disclosures are available
-                on the official website: trademilaan
+                on the official website: Good Investor
               </li>
               <h3 className="font-bold">
                 Most Important Terms and Conditions (MITC)
               </h3>
-              <li>Applicable to Research Services by Sasikumar Peyyala</li>
-              <li>SEBI Registration Number: INH000019327</li>
+              <li>Applicable to Research Services by Eeda Damodara Rao</li>
+              <li>SEBI Registration Number: INH000024967</li>
               <h3 className="font-bold">Non-Execution of Trades</h3>
               <li>
-                (a) Sasikumar Peyyala does not execute or carry out any purchase
+                (a) Eeda Damodara Rao does not execute or carry out any purchase
                 or sell transactions on behalf of clients.
               </li>
               <li>
@@ -1014,7 +1014,7 @@ export default function ServiceAgreement({
                 {" "}
                 Make all fee payments ONLY through:
               </h3>
-              <li>(a) The official website of Sasikumar Peyyala.</li>
+              <li>(a) The official website of Eeda Damodara Rao.</li>
               <li>(b) Direct bank account in the firm's name</li>
               <li>
                 (c) CeFCoM link or SEBI-authorized payment methods like valid
@@ -1218,7 +1218,7 @@ export default function ServiceAgreement({
                   <p className="font-bold text-sm">Name: {clientName}</p>
                 </div>
                 <div className="p-4">
-                  <p className="font-bold text-sm">Name: Sasikumar Peyyala</p>
+                  <p className="font-bold text-sm">Name: Eeda Damodara Rao</p>
                 </div>
               </div>
 
@@ -1242,7 +1242,7 @@ export default function ServiceAgreement({
                     <RASignature />
                   </div>
                   <p className="text-xs font-bold text-center mt-1">
-                    Signature (RA)
+                    Signature (Research Analyst)
                   </p>
                 </div>
               </div>
@@ -1259,9 +1259,9 @@ export default function ServiceAgreement({
                   <p className="mt-2">Date: {signedDate}</p>
                 </div>
                 <div className="p-4 text-xs">
-                  <p className="font-bold">SEBI RA Number: INH000019327</p>
+                  <p className="font-bold">SEBI RA Number: INH000024967</p>
                   <p>Registration Date: 07-January-2025</p>
-                  <p className="mt-2">Date: _________________</p>
+                  <p className="mt-2">Date: {signedDate}</p>
                 </div>
               </div>
             </div>

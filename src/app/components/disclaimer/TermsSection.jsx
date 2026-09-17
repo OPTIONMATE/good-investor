@@ -4,15 +4,15 @@ export default function TermsSection() {
       <div className="w-full h-96 rounded-xl overflow-hidden">
         <img
           src="/terms.jpg"
-          alt="Terms and conditions for issuance of research reports by Sasikumar Peyyala"
+          alt="Terms and conditions for issuance of research reports by Eeda Damodara Rao"
           className="h-full w-full object-cover"
         />
       </div>
 
       <div>
         <h2 className="text-2xl font-bold mb-4">
-          Terms & Conditions of issuance of Research Report issued by SASIKUMAR
-          PEYYALA: INH000019327
+          Terms & Conditions of issuance of Research Report issued by Eeda
+          Damodara Rao: INH000024967
         </h2>
 
         <p className="text-gray-600 mb-3">

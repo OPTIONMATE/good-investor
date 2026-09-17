@@ -6,20 +6,20 @@ import { WobbleCard } from "../ui/wobble-card";
 
 const cards = [
   {
-    title: "Sasikumar Peyyala",
-    desc: "Sasikumar Peyyala is engaged in the business of Research Analyst activities by providing Buy/Sell/Hold calls or other ratings defined to their clients.",
+    title: "Eeda Damodara Rao",
+    desc: "Eeda Damodara Rao is engaged in the business of Research Analyst activities by providing Buy/Sell/Hold calls or other ratings defined to their clients.",
     icon: FiUser,
     color: "from-blue-500 to-cyan-500",
   },
   {
     title: "SEBI Registration",
-    desc: "Sasikumar Peyyala is registered as a Research Analyst under SEBI (Research Analyst) Regulations, 2014. SEBI Reg. No. INH000019327",
+    desc: "Eeda Damodara Rao is registered as a Research Analyst under SEBI (Research Analyst) Regulations, 2014. SEBI Reg. No. INH000024967",
     icon: FiAward,
     color: "from-purple-500 to-pink-500",
   },
   {
     title: "Disciplinary History",
-    desc: "No disciplinary actions, penalties, or regulatory issues have ever been levied against Sasikumar Peyyala: INH000019327, partners, or associates",
+    desc: "No disciplinary actions, penalties, or regulatory issues have ever been levied against Eeda Damodara Rao: INH000024967, partners, or associates",
     icon: FiShield,
     color: "from-emerald-500 to-teal-500",
   },
@@ -66,8 +66,8 @@ export default function MaterialDisclosureCards() {
             Material Information
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900">
-            Disclosures of all material information Sasikumar Peyyala:
-            INH000019327
+            Disclosures of all material information Eeda Damodara Rao:
+            INH000024967
           </h2>
         </div>
 

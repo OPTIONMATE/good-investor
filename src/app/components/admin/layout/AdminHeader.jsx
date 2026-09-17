@@ -47,7 +47,7 @@ export default function AdminHeader({
 
       {/* Mobile-only brand hint */}
       <span className="text-sm font-semibold text-neutral-900 lg:hidden">
-        trademilaan
+        Good Investor
       </span>
 
       <nav aria-label="Breadcrumb" className="hidden items-center gap-1.5 text-sm sm:flex">

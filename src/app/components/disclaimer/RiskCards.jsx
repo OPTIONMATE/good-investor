@@ -30,7 +30,7 @@ const risks = [
   },
   {
     title: "SEBI SPECIFIED MECHANISM FOR FEE COLLECTION",
-    desc: "All research service fees must be paid online via Sasikumar Peyyala account gateway or CeFCoM other payments aren’t valid",
+    desc: "All research service fees must be paid online via Eeda Damodara Rao account gateway or CeFCoM other payments aren’t valid",
   },
 ];
 

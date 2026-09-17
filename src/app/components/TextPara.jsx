@@ -22,7 +22,7 @@ export default function TextPara() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-4xl leading-snug text-neutral-900"
         >
-          Sasikumar Peyyala leverages advanced AI and machine learning to simplify
+          Eeda Damodara Rao leverages advanced AI and machine learning to simplify
           complex market data into actionable insights. With nine years of financial
           expertise, he develops research-driven models that help traders and
           investors make smarter, faster, and more confident decisions in dynamic

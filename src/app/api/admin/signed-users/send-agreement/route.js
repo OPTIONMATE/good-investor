@@ -96,7 +96,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "No recipient email found for this agreement" }, { status: 400 });
     }
 
-    // Send email to user and CC to spkumar
+    // Send email to user and CC to compliance
     await sendAgreementPDFMail({
       to: recipientEmail,
       pdfBuffer,

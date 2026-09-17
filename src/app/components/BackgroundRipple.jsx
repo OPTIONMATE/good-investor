@@ -65,7 +65,7 @@ export function BackgroundRipple() {
 
       <div className="mt-32 md:mt-48 lg:mt-60 w-full relative z-10 px-4">
         <p className="text-center text-xs md:text-lg font-bold tracking-wider">
-          trademilaan
+          Good Investor
         </p>
 
         <motion.h1

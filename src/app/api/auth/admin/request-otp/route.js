@@ -88,10 +88,10 @@ export async function POST(req) {
               <!-- Header -->
               <tr>
                 <td style="padding:28px 32px;">
-                  <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Trademilaan</h1>
-                  <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Sasikumar Peyyala</p>
+                  <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Good Investor</h1>
+                  <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Eeda Damodara Rao</p>
                   <p style="margin:0 0 2px 0;font-size:11px;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;">SEBI Registered Research Analyst</p>
-                  <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000019327</p>
+                  <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000024967</p>
                 </td>
               </tr>
 
@@ -121,14 +121,14 @@ export async function POST(req) {
                     </ul>
                   </div>
 
-                  <p style="font-size:13px;color:#404040;margin:0;line-height:1.6;">Sasikumar Peyyala is SEBI Registered Research Analyst (Registration No: INH000019327).</p>
+                  <p style="font-size:13px;color:#404040;margin:0;line-height:1.6;">Eeda Damodara Rao is SEBI Registered Research Analyst (Registration No: INH000024967).</p>
                 </td>
               </tr>
 
               <!-- Footer -->
               <tr>
                 <td style="padding:20px 32px;border-top:1px solid #eaeaea;background:#f9fafb;">
-                  <p style="font-size:12px;color:#9B9B9B;margin:0;text-align:center;">© ${new Date().getFullYear()} Trademilaan</p>
+                  <p style="font-size:12px;color:#9B9B9B;margin:0;text-align:center;">© ${new Date().getFullYear()} Good Investor</p>
                 </td>
               </tr>
             </table>
@@ -141,7 +141,7 @@ export async function POST(req) {
       await transporter.sendMail({
         from: mailFrom,
         to: normalizedEmail,
-        subject: "Admin Account Registration OTP – Trademilaan",
+        subject: "Admin Account Registration OTP – Good Investor",
         html: htmlContent,
         replyTo: process.env.ADMIN_REPLY_EMAIL || "admin@trademilaan.com",
       });

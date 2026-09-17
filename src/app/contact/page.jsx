@@ -3,9 +3,9 @@ import ContactDetails from "@/app/components/ContactDetails";
 import ContactForm from "@/app/components/ContactForm";
 
 export const metadata = {
-  title: "Contact Us - trademilaan",
+  title: "Contact Us - Good Investor",
   description:
-    "Get in touch with trademilaan. We're here to help with your trading queries and support needs.",
+    "Get in touch with Good Investor. We're here to help with your trading queries and support needs.",
 };
 
 export default function ContactPage() {

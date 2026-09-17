@@ -3,7 +3,7 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
   const from =
     process.env.MAIL_FROM ||
     process.env.MAIL_USER ||
-    "trademilaan.data@gmail.com";
+    "goodinvestor.data1@gmail.com";
 
   const panDisplay = clientPan ? clientPan : "Not Provided";
   const currentYear = new Date().getFullYear();
@@ -23,10 +23,10 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
           <!-- Header -->
           <tr>
             <td style="padding:28px 32px;">
-              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Trademilaan</h1>
-              <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Sasikumar Peyyala</p>
+              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Good Investor</h1>
+              <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Eeda Damodara Rao</p>
               <p style="margin:0 0 2px 0;font-size:11px;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;">SEBI Registered Research Analyst</p>
-              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000019327</p>
+              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000024967</p>
             </td>
           </tr>
 
@@ -74,7 +74,7 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
                 <li style="margin-bottom:8px;">Ensure all KYC details are accurate and match your official documents.</li>
                 <li style="margin-bottom:8px;">Any delay in KYC verification may delay service activation.</li>
                 <li style="margin-bottom:8px;">Payments are subject to company policies and applicable regulatory guidelines.</li>
-                <li style="margin-bottom:8px;"><strong>Sasikumar Peyyala does not provide any assured or guaranteed returns.</strong></li>
+                <li style="margin-bottom:8px;"><strong>Eeda Damodara Rao does not provide any assured or guaranteed returns.</strong></li>
                 <li>Investments in securities markets are subject to market risks; please read all related documents carefully before investing.</li>
               </ul>
 
@@ -82,14 +82,14 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
               <p style="font-size:13px;font-weight:700;color:#9BE749;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.8px;">Next Steps to Proceed with Onboarding</p>
               <ol style="margin:0 0 24px 0;padding-left:18px;font-size:14px;color:#404040;line-height:1.8;">
                 <li style="margin-bottom:8px;">Kindly review the attached agreement carefully.</li>
-                <li style="margin-bottom:8px;">Report any errors or discrepancies immediately to <a href="mailto:spkumar.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">spkumar.researchanalyst@gmail.com</a>.</li>
+                <li style="margin-bottom:8px;">Report any errors or discrepancies immediately to <a href="mailto:damu.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">damu.researchanalyst@gmail.com</a>.</li>
                 <li style="margin-bottom:8px;">Complete your subscription payment (if applicable).</li>
                 <li>Services will be activated only after successful KYC verification through a SEBI-registered KYC Registration Agency (KRA).</li>
               </ol>
 
               <!-- SEBI & Contact -->
-              <p style="font-size:12px;color:#404040;margin:0 0 12px 0;line-height:1.6;">Sasikumar Peyyala is SEBI Registered Research Analyst (Registration No: INH000019327).</p>
-              <p style="font-size:12px;color:#404040;margin:0;line-height:1.6;">Need help? Email <a href="mailto:spkumar.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">spkumar.researchanalyst@gmail.com</a></p>
+              <p style="font-size:12px;color:#404040;margin:0 0 12px 0;line-height:1.6;">Eeda Damodara Rao is SEBI Registered Research Analyst (Registration No: INH000024967).</p>
+              <p style="font-size:12px;color:#404040;margin:0;line-height:1.6;">Need help? Email <a href="mailto:damu.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">damu.researchanalyst@gmail.com</a></p>
 
             </td>
           </tr>
@@ -97,7 +97,7 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
           <!-- Footer -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #eaeaea;background:#f9fafb;">
-              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">© ${currentYear} Trademilaan | Sasikumar Peyyala, SEBI Registered Research Analyst</p>
+              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">© ${currentYear} Good Investor | Eeda Damodara Rao, SEBI Registered Research Analyst</p>
               <p style="font-size:11px;color:#9B9B9B;margin:0;text-align:center;">
                 <a href="https://www.trademilaan.com/privacy-policy" style="color:#9BE749;text-decoration:none;">Privacy Policy</a> • 
                 <a href="https://www.trademilaan.com/terms-and-condition" style="color:#9BE749;text-decoration:none;">Terms & Conditions</a>
@@ -114,10 +114,10 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
   const mailOptions = {
     from,
     to,
-    cc: "spkumar.researchanalyst@gmail.com",
-    subject: "Your Signed Service Agreement - Trademilaan",
+    cc: "damu.researchanalyst@gmail.com",
+    subject: "Your Signed Service Agreement - Good Investor",
     html,
-    text: `Dear ${clientName || "Valued Client"},\n\nYour Service Agreement has been successfully signed and executed.\n\nPlease find the complete agreement PDF attached to this email.\n\nPAN: ${panDisplay}\nDate: ${signedDate}\n\nThank you for choosing Trademilaan.\n\nRegards,\nSasikumar Peyyala\nSEBI Registered Research Analyst (INH000019327)\nspkumar.researchanalyst@gmail.com\n+91 77022 62206`,
+    text: `Dear ${clientName || "Valued Client"},\n\nYour Service Agreement has been successfully signed and executed.\n\nPlease find the complete agreement PDF attached to this email.\n\nPAN: ${panDisplay}\nDate: ${signedDate}\n\nThank you for choosing Good Investor.\n\nRegards,\nEeda Damodara Rao\nSEBI Registered Research Analyst (INH000024967)\ndamu.researchanalyst@gmail.com\n+91 97046 48777`,
     attachments: [
       {
         filename: "agreement.pdf",
@@ -125,7 +125,7 @@ export async function sendAgreementPDFMail({ to, pdfBuffer, clientName, clientPa
         contentType: "application/pdf",
       },
     ],
-    replyTo: "spkumar.researchanalyst@gmail.com",
+    replyTo: "damu.researchanalyst@gmail.com",
   };
 
   try {
@@ -180,7 +180,7 @@ export async function sendTermsAndConditionsMail(email) {
   const from =
     process.env.MAIL_FROM ||
     process.env.MAIL_USER ||
-    "trademilaan.data@gmail.com";
+    "goodinvestor.data1@gmail.com";
 
   // ---------- HTML EMAIL ----------
   const html = `
@@ -192,10 +192,10 @@ export async function sendTermsAndConditionsMail(email) {
           <!-- Header -->
           <tr>
             <td style="padding:28px 32px;">
-              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Trademilaan</h1>
-              <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Sasikumar Peyyala</p>
+              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Good Investor</h1>
+              <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Eeda Damodara Rao</p>
               <p style="margin:0 0 2px 0;font-size:11px;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;">SEBI Registered Research Analyst</p>
-              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000019327</p>
+              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000024967</p>
             </td>
           </tr>
 
@@ -225,7 +225,7 @@ export async function sendTermsAndConditionsMail(email) {
               </ul>
 
               <!-- Compliance Notice -->
-              <p style="font-size:12px;color:#404040;margin:0;line-height:1.6;">Sasikumar Peyyala is SEBI Registered Research Analyst (Registration No: INH000019327). For grievances, email <a href="mailto:spkumar.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">spkumar.researchanalyst@gmail.com</a> or visit <a href="https://scores.sebi.gov.in/" style="color:#9BE749;text-decoration:none;font-weight:600;">SCORES</a>.</p>
+              <p style="font-size:12px;color:#404040;margin:0;line-height:1.6;">Eeda Damodara Rao is SEBI Registered Research Analyst (Registration No: INH000024967). For grievances, email <a href="mailto:damu.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">damu.researchanalyst@gmail.com</a> or visit <a href="https://scores.sebi.gov.in/" style="color:#9BE749;text-decoration:none;font-weight:600;">SCORES</a>.</p>
 
             </td>
           </tr>
@@ -233,7 +233,7 @@ export async function sendTermsAndConditionsMail(email) {
           <!-- Footer -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #eaeaea;background:#f9fafb;">
-              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">© ${new Date().getFullYear()} Trademilaan | Sasikumar Peyyala, SEBI Registered Research Analyst</p>
+              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">© ${new Date().getFullYear()} Good Investor | Eeda Damodara Rao, SEBI Registered Research Analyst</p>
               <p style="font-size:11px;color:#9B9B9B;margin:0;text-align:center;">
                 <strong>Disclaimer:</strong> SEBI registration does not guarantee performance or assured returns. Investments are subject to market risks.
               </p>
@@ -250,9 +250,9 @@ export async function sendTermsAndConditionsMail(email) {
     const info = await transporter.sendMail({
       from,
       to: email,
-      subject: "Terms & Conditions – Trademilaan",
+      subject: "Terms & Conditions – Good Investor",
       html,
-      replyTo: "spkumar.researchanalyst@gmail.com",
+      replyTo: "damu.researchanalyst@gmail.com",
     });
 
     console.log("MAIL SENT ✅", info.messageId);
@@ -277,7 +277,7 @@ export async function sendInvoicePDFMail({ to, pdfBuffer, clientName, email, pho
   const from =
     process.env.MAIL_FROM ||
     process.env.MAIL_USER ||
-    "trademilaan.data@gmail.com";
+    "goodinvestor.data1@gmail.com";
 
   const currentYear = new Date().getFullYear();
   const invoiceDate = new Date().toLocaleDateString("en-IN", {
@@ -296,10 +296,10 @@ export async function sendInvoicePDFMail({ to, pdfBuffer, clientName, email, pho
           <!-- Header -->
           <tr>
             <td style="padding:28px 32px;">
-              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Trademilaan</h1>
-              <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Sasikumar Peyyala</p>
+              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Good Investor</h1>
+              <p style="margin:0 0 4px 0;font-size:14px;color:#6b7280;">Eeda Damodara Rao</p>
               <p style="margin:0 0 2px 0;font-size:11px;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;">SEBI Registered Research Analyst</p>
-              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000019327</p>
+              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000024967</p>
             </td>
           </tr>
 
@@ -309,7 +309,7 @@ export async function sendInvoicePDFMail({ to, pdfBuffer, clientName, email, pho
               
               <!-- Greeting -->
               <p style="font-size:13px;margin:0 0 2px 0;color:#111827;font-weight:600;">Dear Sir/Madam,</p>
-              <p style="font-size:13px;color:#6b7280;margin:0 0 16px 0;">Greetings from TradeMilaan (SASIKUMAR PEYYALA).</p>
+              <p style="font-size:13px;color:#6b7280;margin:0 0 16px 0;">Greetings from Good Investor (Eeda Damodara Rao).</p>
 
               <!-- Main Message -->
               <h2 style="font-size:16px;margin:0 0 8px 0;color:#111827;font-weight:700;">Your subscription has been successfully initiated.</h2>
@@ -357,10 +357,10 @@ export async function sendInvoicePDFMail({ to, pdfBuffer, clientName, email, pho
 
               <!-- Compliance Disclosure -->
               <p style="font-size:13px;font-weight:700;color:#9BE749;margin:0 0 12px 0;text-transform:uppercase;letter-spacing:0.8px;">Compliance Disclosure:</p>
-              <p style="font-size:14px;color:#404040;margin:0 0 12px 0;line-height:1.6;">Mr. Sasikumar Peyyala is a SEBI Registered Research Analyst (Registration No: INH000019327). For Disclaimers and Disclosure please visit <a href="https://www.trademilaan.in" style="color:#9BE749;text-decoration:none;font-weight:600;">www.trademilaan.in</a></p>
+              <p style="font-size:14px;color:#404040;margin:0 0 12px 0;line-height:1.6;">Mr. Eeda Damodara Rao is a SEBI Registered Research Analyst (Registration No: INH000024967). For Disclaimers and Disclosure please visit <a href="https://www.trademilaan.in" style="color:#9BE749;text-decoration:none;font-weight:600;">www.trademilaan.in</a></p>
 
               <!-- Support Contact -->
-              <p style="font-size:14px;color:#404040;margin:0;line-height:1.6;">For any assistance, feel free to contact our support team at <a href="tel:7702262206" style="color:#9BE749;text-decoration:none;font-weight:600;">+91-7702262206</a> or <a href="mailto:spkumar.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">spkumar.researchanalyst@gmail.com</a></p>
+              <p style="font-size:14px;color:#404040;margin:0;line-height:1.6;">For any assistance, feel free to contact our support team at <a href="tel:9704648777" style="color:#9BE749;text-decoration:none;font-weight:600;">+91-9704648777</a> or <a href="mailto:damu.researchanalyst@gmail.com" style="color:#9BE749;text-decoration:none;font-weight:600;">damu.researchanalyst@gmail.com</a></p>
 
             </td>
           </tr>
@@ -368,7 +368,7 @@ export async function sendInvoicePDFMail({ to, pdfBuffer, clientName, email, pho
           <!-- Footer -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #eaeaea;background:#f9fafb;">
-              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">© ${currentYear} Trademilaan | Sasikumar Peyyala, SEBI Registered Research Analyst</p>
+              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">© ${currentYear} Good Investor | Eeda Damodara Rao, SEBI Registered Research Analyst</p>
               <p style="font-size:11px;color:#9B9B9B;margin:0;text-align:center;">
                 <a href="https://www.trademilaan.com/privacy-policy" style="color:#9BE749;text-decoration:none;">Privacy Policy</a> • 
                 <a href="https://www.trademilaan.com/terms-and-condition" style="color:#9BE749;text-decoration:none;">Terms & Conditions</a>
@@ -384,12 +384,12 @@ export async function sendInvoicePDFMail({ to, pdfBuffer, clientName, email, pho
 
   const mailOptions = {
     from,
-    to: [to, "spkumar.researchanalyst@gmail.com"],
+    to: [to, "damu.researchanalyst@gmail.com"],
     subject: "Subscription Initiated - Invoice & Activation Details",
     html,
     text: `Dear Sir/Madam,
 
-Greetings from TradeMilaan (SASIKUMAR PEYYALA).
+Greetings from Good Investor (EEDA DAMODARA RAO).
 
 Your subscription has been successfully initiated.
 
@@ -410,14 +410,14 @@ Amount Paid: Rs. ${amount}
 Contact: +91 ${phone}
 
 Compliance Disclosure:
-Mr. Sasikumar Peyyala is a SEBI Registered Research Analyst (Registration No: INH000019327).
+Mr. Eeda Damodara Rao is a SEBI Registered Research Analyst (Registration No: INH000024967).
 For Disclaimers and Disclosure please visit www.trademilaan.in
 
-For any assistance, feel free to contact our support team at +91-7702262206 or spkumar.researchanalyst@gmail.com
+For any assistance, feel free to contact our support team at +91-9704648777 or damu.researchanalyst@gmail.com
 
 Regards,
-Sasikumar Peyyala
-SEBI Registered Research Analyst (INH000019327)`,
+Eeda Damodara Rao
+SEBI Registered Research Analyst (INH000024967)`,
     attachments: [
       {
         filename: "invoice.pdf",
@@ -425,7 +425,7 @@ SEBI Registered Research Analyst (INH000019327)`,
         contentType: "application/pdf",
       },
     ],
-    replyTo: "spkumar.researchanalyst@gmail.com",
+    replyTo: "damu.researchanalyst@gmail.com",
   };
 
   try {
@@ -451,7 +451,7 @@ export async function sendOtpMail({ to, otp, username }) {
   const from =
     process.env.MAIL_FROM ||
     process.env.MAIL_USER ||
-    "trademilaan.data@gmail.com";
+    "goodinvestor.data1@gmail.com";
 
   const currentYear = new Date().getFullYear();
 
@@ -464,9 +464,9 @@ export async function sendOtpMail({ to, otp, username }) {
           <!-- Header -->
           <tr>
             <td style="padding:28px 32px;">
-              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Trademilaan</h1>
+              <h1 style="margin:0 0 6px 0;font-size:32px;color:#111827;font-weight:700;line-height:1.2;">Good Investor</h1>
               <p style="margin:0 0 2px 0;font-size:11px;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;">SEBI Registered Research Analyst</p>
-              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000019327</p>
+              <p style="margin:0;font-size:10px;color:#9B9B9B;letter-spacing:0.8px;">Registration No: INH000024967</p>
             </td>
           </tr>
 
@@ -490,8 +490,8 @@ export async function sendOtpMail({ to, otp, username }) {
               </p>
 
               <p style="font-size:13px;color:#404040;margin:0 0 8px 0;line-height:1.6;">Regards,</p>
-              <p style="font-size:13px;color:#111827;font-weight:600;margin:0;">Sasikumar Peyyala</p>
-              <p style="font-size:11px;color:#9B9B9B;margin:0;">SEBI Registered Research Analyst (INH000019327)</p>
+              <p style="font-size:13px;color:#111827;font-weight:600;margin:0;">Eeda Damodara Rao</p>
+              <p style="font-size:11px;color:#9B9B9B;margin:0;">SEBI Registered Research Analyst (INH000024967)</p>
 
             </td>
           </tr>
@@ -499,7 +499,7 @@ export async function sendOtpMail({ to, otp, username }) {
           <!-- Footer -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #eaeaea;background:#f9fafb;">
-              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">${currentYear} Trademilaan | Sasikumar Peyyala, SEBI Registered Research Analyst</p>
+              <p style="font-size:11px;color:#9B9B9B;margin:0 0 6px 0;text-align:center;">${currentYear} Good Investor | Eeda Damodara Rao, SEBI Registered Research Analyst</p>
               <p style="font-size:11px;color:#9B9B9B;margin:0;text-align:center;">
                 <a href="https://www.trademilaan.com/privacy-policy" style="color:#9BE749;text-decoration:none;">Privacy Policy</a> •
                 <a href="https://www.trademilaan.com/terms-and-condition" style="color:#9BE749;text-decoration:none;">Terms & Conditions</a>
@@ -516,10 +516,10 @@ export async function sendOtpMail({ to, otp, username }) {
   const mailOptions = {
     from,
     to,
-    subject: `Your Trademilaan verification code: ${otp}`,
+    subject: `Your Good Investor verification code: ${otp}`,
     html,
-    text: `Welcome${username ? `, ${username}` : ""}!\n\nYour Trademilaan verification code is: ${otp}\n\nThis code expires in 10 minutes.\n\nIf you didn't create an account, you can safely ignore this email.\n\nRegards,\nSasikumar Peyyala\nSEBI Registered Research Analyst (INH000019327)`,
-    replyTo: "spkumar.researchanalyst@gmail.com",
+    text: `Welcome${username ? `, ${username}` : ""}!\n\nYour Good Investor verification code is: ${otp}\n\nThis code expires in 10 minutes.\n\nIf you didn't create an account, you can safely ignore this email.\n\nRegards,\nEeda Damodara Rao\nSEBI Registered Research Analyst (INH000024967)`,
+    replyTo: "damu.researchanalyst@gmail.com",
   };
 
   // Retry logic: Gmail SMTP can transiently fail (rate limits, network).

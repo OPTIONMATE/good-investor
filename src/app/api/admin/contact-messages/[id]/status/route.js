@@ -46,7 +46,7 @@ async function sendResolvedEmail(ticket) {
             
             <p>If you have any follow-up questions, please reply to this email or contact us at ${CONTACT_RECEIVER_EMAIL}.</p>
             
-            <p>Thank you for choosing Trademilaan!</p>
+            <p>Thank you for choosing Good Investor!</p>
             <p style="margin-top: 30px; font-size: 12px; color: #666;">
               For support: ${CONTACT_RECEIVER_EMAIL}
             </p>

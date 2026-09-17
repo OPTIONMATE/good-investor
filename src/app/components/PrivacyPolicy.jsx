@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
         <section>
           <h2 className="text-2xl font-bold mb-3">Introduction</h2>
           <p>
-            This Privacy Policy describes how <b>MS Sasikumar Peyyala</b> (“we”,
+            This Privacy Policy describes how <b>MS Eeda Damodara Rao</b> (“we”,
             “our”, “us”) collect, use, share, protect or otherwise process your
             personal data through our website{" "}
             <a

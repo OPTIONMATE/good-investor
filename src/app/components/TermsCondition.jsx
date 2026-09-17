@@ -24,10 +24,10 @@ export default function TermsCondition() {
         <section>
           <h2 className="text-2xl font-bold mb-4">1. Introduction</h2>
           <p>
-            <b>Research Analyst (RA):</b> Sasikumar Peyyala, registered with
-            SEBI under Registration No. <b>INH000019327</b>, having registered
-            address at 1-2/4-29/4, Near DSM High School, Kummaripalem Center,
-            Vidhyadharapuram, Vijayawada, Krishna District - 520012.
+            <b>Research Analyst (RA):</b> Eeda Damodara Rao, registered with
+            SEBI under Registration No. <b>INH000024967</b>, having registered
+            address at T2601, MY HOME TRIDASA, TELLAPUR, SANGA REDDY,
+            HYDERABAD, TELANGANA - 502032.
           </p>
           <p className="mt-2">
             <b>User/Client:</b> The individual or entity subscribing to or
@@ -146,7 +146,7 @@ export default function TermsCondition() {
             discretion.
           </p>
           <p className="mt-2">
-            For grievances, contact: <b>spkumar.researchanalyst@gmail.com</b>.
+            For grievances, contact: <b>damu.researchanalyst@gmail.com</b>.
             If unresolved, you may approach SEBI via SCORES.
           </p>
         </section>

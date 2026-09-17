@@ -1,7 +1,7 @@
 import ComplaintTable from "../components/ComplaintTable";
 
 export const metadata = {
-  title: "Complaint Table - trademilaan",
+  title: "Complaint Table - Good Investor",
   description: "Complaint table with admin-updated complaint metrics.",
 };
 

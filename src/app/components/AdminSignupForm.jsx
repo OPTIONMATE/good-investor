@@ -109,7 +109,7 @@ export default function AdminSignupForm() {
                 </h2>
                 <p className="text-sm text-neutral-600 md:text-base">
                   Create a secure admin account with OTP verification to manage
-                  the trademilaan platform.
+                  the Good Investor platform.
                 </p>
               </div>
             </div>
