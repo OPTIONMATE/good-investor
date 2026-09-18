@@ -166,7 +166,25 @@ transporter
   .then(() => console.log("SMTP READY — transporter verified"))
   .catch((err) => console.error("SMTP VERIFY FAILED ❌", err));
 
-export async function sendTermsAndConditionsMail(email) {
+export async function sendTermsAndConditionsMail(emailOrOptions, maybeOptions) {
+  // Backwards-compatible signature:
+  //   sendTermsAndConditionsMail(email)
+  //   sendTermsAndConditionsMail(email, { userId })
+  //   sendTermsAndConditionsMail({ email, userId })
+  // Prefer updating the flag by `_id` when available so email-casing
+  // differences (e.g. raw Google profile email vs lowercased storage)
+  // cannot cause the flag update to miss the user that triggered the mail.
+  let email;
+  let userId = null;
+  if (emailOrOptions && typeof emailOrOptions === "object") {
+    email = emailOrOptions.email;
+    userId = emailOrOptions.userId || emailOrOptions.user_id || null;
+  } else {
+    email = emailOrOptions;
+    if (maybeOptions && typeof maybeOptions === "object") {
+      userId = maybeOptions.userId || maybeOptions.user_id || null;
+    }
+  }
   if (!email) throw new Error("Recipient email missing");
 
   const baseUrl = (
@@ -259,11 +277,15 @@ export async function sendTermsAndConditionsMail(email) {
 
     // Source of truth: mark MITC mailed only when mail send succeeds.
     await connectDB();
-    await User.findOneAndUpdate(
-      { email: String(email).toLowerCase().trim() },
-      { mitcMailedToUser: true },
-      { new: false }
-    );
+  if (userId) {
+      await User.findByIdAndUpdate(userId, { mitcMailedToUser: true }, { new: false });
+    } else {
+      await User.findOneAndUpdate(
+        { email: String(email).toLowerCase().trim() },
+        { mitcMailedToUser: true },
+        { new: false }
+      );
+    }
 
     return info;
   } catch (err) {

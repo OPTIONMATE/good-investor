@@ -6,6 +6,7 @@ import Payment from "@/app/lib/models/Payment";
 import { generateCompleteAgreementPDF } from "@/app/lib/generateCompletePDF";
 import { computeFinalServiceDate, derivePurchasedDurationDays } from "@/app/lib/planValidity";
 import { sendAgreementPDFMail } from "@/app/lib/mailer";
+import { markAgreementMailed } from "@/app/lib/agreementMailTracking";
 import { requireAdmin } from "@/app/lib/authServer";
 import { isValidObjectId } from "@/app/lib/validators";
 
@@ -96,7 +97,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "No recipient email found for this agreement" }, { status: 400 });
     }
 
-    // Send email to user and CC to compliance
+    // Send email to user and CC to spkumar
     await sendAgreementPDFMail({
       to: recipientEmail,
       pdfBuffer,
@@ -104,17 +105,16 @@ export async function POST(req) {
       clientPan: agreement.clientPan || (user && user.panNumber) || "",
     });
 
-    // Mark user's flag as mailed
-    if (!user && agreement.userId) {
-      user = await User.findById(agreement.userId);
-    }
-    if (user) {
-      user.agreementMailedToUser = true;
-      user.agreementMailedAt = new Date();
-      await user.save();
-    }
+    // Same tracking semantics as the user download flow: primary record is THIS
+    // SignedAgreement; owner User is also maintained for backward compat.
+    // Runs only after the mail transport accepted the email.
+    const { mailedAt } = await markAgreementMailed({
+      agreementId: agreement._id,
+      mailedTo: recipientEmail,
+      logContext: "SEND AGREEMENT (ADMIN)",
+    });
 
-    return NextResponse.json({ success: true, message: "Agreement mailed" });
+    return NextResponse.json({ success: true, message: "Agreement mailed", agreementMailedAt: mailedAt });
   } catch (err) {
     console.error("Send agreement error:", err);
     return NextResponse.json({ error: err.message || "Failed to send agreement" }, { status: 500 });

@@ -88,10 +88,15 @@ export async function POST(req) {
     });
 
     // Check if agreement already signed by this user (for production, allow re-signing in dev)
-    const existingAgreement = await SignedAgreement.findOne({
-      userId,
-      status: "SIGNED",
-    });
+    // Scoped to user + plan so the same user can hold one signed agreement
+    // per plan (renewals / multiple purchases), while re-signing the same plan
+    // updates the existing doc instead of creating duplicates.
+    const requestedPlanIdForLookup = String(signedPlanId || "").trim();
+    const existingAgreementQuery = { userId, status: "SIGNED" };
+    if (requestedPlanIdForLookup && isValidObjectId(requestedPlanIdForLookup)) {
+      existingAgreementQuery.signedPlanId = requestedPlanIdForLookup;
+    }
+    const existingAgreement = await SignedAgreement.findOne(existingAgreementQuery);
 
     // Allow re-signing for development - comment out for production
     if (existingAgreement) {
@@ -180,15 +185,18 @@ export async function POST(req) {
       clientEmail,
     };
 
-    // If agreement already exists, update it; otherwise create new
+    // If agreement already exists, update it; otherwise create new.
+    // Re-signing the same plan preserves an already-linked paymentId — the
+    // exact payment link is only (re)set by POST /api/payment/verify.
     let savedAgreement;
     if (existingAgreement) {
       console.log(
         "Updating existing signed agreement for re-signing in dev mode.",
       );
+      const { paymentId: _preservePaymentLink, ...resignAgreementData } = agreementData;
       savedAgreement = await SignedAgreement.findOneAndUpdate(
-        { userId, status: "SIGNED" },
-        agreementData,
+        { _id: existingAgreement._id },
+        resignAgreementData,
         { new: true },
       );
     } else {

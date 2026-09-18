@@ -3,7 +3,9 @@ import connectDB from "@/app/lib/db";
 
 import { generateInvoicePDF } from "@/app/lib/generateInvoicePDF";
 import { sendInvoicePDFMail } from "@/app/lib/mailer";
+import { markInvoiceMailed } from "@/app/lib/invoiceMailTracking";
 import Payment from "@/app/lib/models/Payment";
+import SignedAgreement from "@/app/lib/models/SignedAgreement";
 import Coupon from "@/app/lib/models/Coupon";
 import Plan from "@/app/lib/models/Plan";
 import {
@@ -43,6 +45,7 @@ export async function POST(request) {
     couponCode,
     planId,
     planName,
+    agreementId,
     state,
     pan,
     panNumber,
@@ -261,6 +264,65 @@ export async function POST(request) {
     });
     await payment.save();
 
+    // Link THIS payment to its exact SignedAgreement (Agreement A → Payment A).
+    // The agreementId is carried through the buy flow; it is validated here
+    // (format + ownership + same-plan) and never trusted blindly. A
+    // missing/invalid/mismatched agreementId leaves the agreement unlinked
+    // (legacy-safe null) — the admin fallback below then applies. Linking never
+    // throws: a secondary DB failure must not fail an already-paid verification.
+    const requestedAgreementId = String(agreementId || "").trim();
+    try {
+      if (requestedAgreementId && isValidObjectId(requestedAgreementId)) {
+        const linkedAgreement = await SignedAgreement.findById(requestedAgreementId)
+          .select("userId signedPlanId clientEmail paymentId")
+          .lean();
+        const agreementOwnerId = linkedAgreement ? String(linkedAgreement.userId || "") : "";
+        const agreementEmail = linkedAgreement
+          ? String(linkedAgreement.clientEmail || "").toLowerCase().trim()
+          : "";
+        const payerId = decodedAuth?.id ? String(decodedAuth.id) : "";
+        const ownsAgreement =
+          Boolean(linkedAgreement) &&
+          ((payerId && agreementOwnerId && agreementOwnerId === payerId) ||
+            (normalizedEmail && agreementEmail && agreementEmail === normalizedEmail));
+        // Same-plan guard: an agreement snapshot for plan X must never be
+        // linked to a payment for plan Y (prevents cross-linking when a user
+        // signs plan A but pays for plan B in another tab).
+        const agreementPlanId = linkedAgreement
+          ? String(linkedAgreement.signedPlanId || "").trim()
+          : "";
+        const samePlan =
+          Boolean(linkedAgreement) &&
+          agreementPlanId &&
+          normalizedPlanId &&
+          agreementPlanId === normalizedPlanId;
+        if (!ownsAgreement) {
+          console.warn(
+            "[PAYMENT VERIFY] agreement link skipped: agreement not owned by payer"
+          );
+        } else if (!samePlan) {
+          console.warn(
+            "[PAYMENT VERIFY] agreement link skipped: plan mismatch between agreement and payment"
+          );
+        } else if (
+          linkedAgreement.paymentId &&
+          String(linkedAgreement.paymentId) !== String(payment._id)
+        ) {
+          // Agreement already linked to a different payment (e.g. double-submit
+          // / retry): keep the first link deterministic, never overwrite.
+          console.warn(
+            "[PAYMENT VERIFY] agreement link skipped: agreement already linked to another payment"
+          );
+        } else {
+          await SignedAgreement.findByIdAndUpdate(requestedAgreementId, {
+            paymentId: String(payment._id),
+          });
+        }
+      }
+    } catch (linkErr) {
+      console.error("[PAYMENT VERIFY] agreement link failed:", linkErr?.message || linkErr);
+    }
+
     // ✅ Mark coupon as used (increment usedCount)
     if (couponCode) {
       await Coupon.findOneAndUpdate(
@@ -340,6 +402,15 @@ export async function POST(request) {
       planName: orderPlanName,
       amount: safeAmount,
       clientPan: pan || panNumber || "",
+    });
+
+    // Tracking (User-level: invoiceMailedToUser/At). Runs only after the mail
+    // transport accepted the email; a tracking failure must never break the
+    // paid verification, so the helper never throws.
+    await markInvoiceMailed({
+      userId: decodedAuth?.id || null,
+      mailedTo: normalizedEmail,
+      logContext: "PAYMENT VERIFY (INVOICE)",
     });
 
     return NextResponse.json({

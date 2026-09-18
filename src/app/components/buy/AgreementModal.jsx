@@ -25,6 +25,7 @@ export default function AgreementModal({
   onSuccess,
   planData,
   userDetails,
+  agreementId: agreementIdProp,
 }) {
   const { user } = useAuth();
   const [checked, setChecked] = useState(false);
@@ -34,6 +35,11 @@ export default function AgreementModal({
   const [pdfUrl, setPdfUrl] = useState(null);
   const [signingData, setSigningData] = useState(null);
   const [capturedAgreementHtml, setCapturedAgreementHtml] = useState("");
+   // The exact SignedAgreement._id produced by sign-and-store; carried into the
+  // payment step so POST /api/payment/verify can link Payment → Agreement.
+  const [linkedAgreementId, setLinkedAgreementId] = useState(
+    agreementIdProp || null,
+  );
 
   // KYC from BuyDetailsForm (Buy flow) — prefer over profile-only user fields
   const kycClientName =
@@ -189,6 +195,7 @@ export default function AgreementModal({
 
       // Store the returned file ID for downloading
       setSignedFileId(result.fileId);
+      setLinkedAgreementId(result.agreementId || result.fileId || null);
       setShowSign(false);
     } catch (err) {
       console.error("❌ SIGNING ERROR:", err);
@@ -223,6 +230,7 @@ export default function AgreementModal({
           onBack={() => setShowPayment(false)}
           planData={planData}
           userDetails={userDetails}
+          agreementId={linkedAgreementId}
         />
       </BuyFlowShell>
     );

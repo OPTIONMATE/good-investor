@@ -212,30 +212,34 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
       "State",
       "Service Name",
       "Agreement Mailed To User",
+      "Agreement Mailed At",
       "MITC Mailed To User",
       "KYC Updated By Admin",
       "Valid From",
       "Valid Till",
       "Renewal Date",
       "Invoice Mailed To User",
+      "Invoice Mailed At",
     ];
 
     const rows = filteredAndSortedUsers.map((u) => [
       u?.name || "",
       u?.pan || "",
       u?.dob || "",
-      formatDate(u?.dateOfConsent),
+      formatDateWithTime(u?.dateOfConsent),
       u?.email || "",
       u?.mobile || "",
       u?.state || "",
       u?.serviceName || "",
       u?.agreementMailedToUser ? "Yes" : "No",
+      formatDateWithTime(u?.agreementMailedAt),
       u?.mitcMailedToUser ? "Yes" : "No",
       u?.kycUpdatedByAdmin ? "Yes" : "No",
       formatDate(u?.validFrom),
       formatDate(u?.validTill),
       formatDate(u?.renewalDate),
       u?.invoiceMailedToUser ? "Yes" : "No",
+      formatDateWithTime(u?.invoiceMailedAt),
     ]);
 
     const csv = [headers, ...rows]
@@ -325,6 +329,15 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
       render: (u) => <MailStatusText value={u?.agreementMailedToUser} />,
     },
     {
+      key: "agreementMailedAt",
+      header: "Agreement mailed at",
+      render: (u) => (
+        <span className="text-sm text-neutral-600">
+          {formatDateWithTime(u?.agreementMailedAt)}
+        </span>
+      ),
+    },
+    {
       key: "mitcMailed",
       header: "MITC mailed",
       render: (u) => <MailStatusText value={u?.mitcMailedToUser} />,
@@ -381,6 +394,15 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
       key: "invoiceMailed",
       header: "Invoice mailed",
       render: (u) => <StatusBadge value={u?.invoiceMailedToUser} />,
+    },
+    {
+      key: "invoiceMailedAt",
+      header: "Invoice mailed at",
+      render: (u) => (
+        <span className="text-sm text-neutral-600">
+          {formatDateWithTime(u?.invoiceMailedAt)}
+        </span>
+      ),
     },
     {
       key: "actions",
@@ -522,7 +544,7 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
                   <MobileField label="Mobile">{u?.mobile}</MobileField>
                   <MobileField label="State">{u?.state}</MobileField>
                   <MobileField label="Consent date">
-                    {formatDate(u?.dateOfConsent)}
+                    {formatDateWithTime(u?.dateOfConsent)}
                   </MobileField>
                   <MobileField label="Valid from">
                     {formatDate(u?.validFrom)}
@@ -532,6 +554,12 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
                   </MobileField>
                   <MobileField label="Renewal">
                     {formatDate(u?.renewalDate)}
+                  </MobileField>
+                  <MobileField label="Agreement mailed at">
+                    {formatDateWithTime(u?.agreementMailedAt)}
+                  </MobileField>
+                  <MobileField label="Invoice mailed at">
+                    {formatDateWithTime(u?.invoiceMailedAt)}
                   </MobileField>
                 </dl>
 
