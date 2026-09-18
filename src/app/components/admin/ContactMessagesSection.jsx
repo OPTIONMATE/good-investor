@@ -1,20 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
-  Search,
   Loader2,
   RefreshCw,
   Trash2,
   MailOpen,
   Mail,
-  ChevronDown,
-  Edit2,
   Check,
   X,
+  Eye,
+  Inbox,
+  Pencil,
 } from "lucide-react";
 import { fetchWithCsrf } from "@/app/lib/csrfClient";
 import AdminPagination from "@/app/components/admin/ui/AdminPagination";
+import AdminSection from "@/app/components/admin/ui/AdminSection";
+import AdminTable from "@/app/components/admin/ui/AdminTable";
+import AdminBadge from "@/app/components/admin/ui/AdminBadge";
+import AdminEmptyState from "@/app/components/admin/ui/AdminEmptyState";
+import AdminModal from "@/app/components/admin/ui/AdminModal";
+import AdminButton from "@/app/components/admin/ui/AdminButton";
+import AdminSelect from "@/app/components/admin/ui/AdminSelect";
+import {
+  AdminSearchInput,
+  AdminToolbar,
+  AdminToolbarField,
+} from "@/app/components/admin/ui/AdminToolbar";
 
 const formatDateTime = (value) => {
   if (!value) return "N/A";
@@ -32,36 +45,23 @@ const formatDateTime = (value) => {
 const truncateText = (value, max = 18) => {
   const text = String(value || "");
   if (text.length <= max) return text;
-  return `${text.slice(0, max)}...`;
+  return `${text.slice(0, max)}…`;
 };
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case "pending":
-      return "bg-yellow-100 text-yellow-700";
-    case "in_progress":
-      return "bg-blue-100 text-blue-700";
-    case "resolved":
-      return "bg-green-100 text-green-700";
-    case "rejected":
-      return "bg-red-100 text-red-700";
-    default:
-      return "bg-slate-100 text-slate-700";
-  }
+const STATUS_BADGE_TONE = {
+  pending: "warning",
+  in_progress: "info",
+  resolved: "success",
+  rejected: "danger",
 };
 
-const getPriorityColor = (priority) => {
-  switch (priority) {
-    case "high":
-      return "bg-red-100 text-red-700 border-red-300";
-    case "medium":
-      return "bg-amber-100 text-amber-700 border-amber-300";
-    case "low":
-      return "bg-green-100 text-green-700 border-green-300";
-    default:
-      return "bg-slate-100 text-slate-700 border-slate-300";
-  }
+const PRIORITY_BADGE_TONE = {
+  high: "danger",
+  medium: "warning",
+  low: "success",
 };
+
+const formatStatusLabel = (status) => String(status || "—").replace(/_/g, " ");
 
 const SUBJECT_LABELS = {
   general: "General Inquiry",
@@ -74,6 +74,275 @@ const SUBJECT_LABELS = {
 const SUBJECT_VALUES = ["general", "account", "billing", "feedback", "other"];
 
 const formatSubject = (value) => SUBJECT_LABELS[value] || "—";
+
+const MESSAGE_PREVIEW_LENGTH = 110;
+
+const truncatePreview = (value, max = MESSAGE_PREVIEW_LENGTH) => {
+  const text = String(value || "");
+  if (text.length <= max) return text;
+  return `${text.slice(0, max).trimEnd()}…`;
+};
+
+/* YouTube-style hover preview for the Message column. Rendered via portal
+   so it is never clipped by the table's horizontal scroll container. */
+function MessageHoverPreview({ anchorRef, text }) {
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    const update = () => {
+      const el = anchorRef?.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const width = Math.min(320, window.innerWidth - 24);
+      const gap = 8;
+      const estHeight = 220;
+      const openUp = r.bottom + gap + estHeight > window.innerHeight && r.top - gap - estHeight > 8;
+      setPos({
+        left: Math.max(8, Math.min(r.left, window.innerWidth - width - 8)),
+        top: openUp ? undefined : r.bottom + gap,
+        bottom: openUp ? window.innerHeight - r.top + gap : undefined,
+        width,
+        openUp,
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [anchorRef]);
+
+  if (!pos) return null;
+
+  return createPortal(
+    <div
+      role="tooltip"
+      style={{
+        position: "fixed",
+        left: pos.left,
+        ...(pos.openUp ? { bottom: pos.bottom } : { top: pos.top }),
+        width: pos.width,
+        zIndex: 80,
+      }}
+      className="rounded-lg border border-neutral-200 bg-white p-3 text-xs leading-5 text-neutral-700 shadow-lg"
+    >
+      <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+        Full message
+      </p>
+      <p className="max-h-48 overflow-y-auto whitespace-pre-wrap break-words">
+        {text}
+      </p>
+    </div>,
+    document.body
+  );
+}
+
+/* Anchored floating card (popover) shared by the Manage cell. Fixed-positioned
+   via portal so it never gets clipped by the table scroll container. */
+function ManagePopover({
+  anchorRef,
+  title,
+  subtitle,
+  assignee,
+  onAssigneeChange,
+  notes,
+  onNotesChange,
+  saving,
+  onClose,
+  onSave,
+}) {
+  const [pos, setPos] = useState(null);
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    const update = () => {
+      const el = anchorRef?.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const width = Math.min(340, window.innerWidth - 24);
+      const gap = 8;
+      const estHeight = 270;
+      const openUp = r.bottom + gap + estHeight > window.innerHeight && r.top - gap - estHeight > 8;
+      setPos({
+        left: Math.max(8, Math.min(r.left, window.innerWidth - width - 8)),
+        top: openUp ? undefined : r.bottom + gap,
+        bottom: openUp ? window.innerHeight - r.top + gap : undefined,
+        width,
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [anchorRef]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const onPointer = (e) => {
+      const panel = panelRef.current;
+      if (panel && !panel.contains(e.target) && !anchorRef?.current?.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onPointer);
+    };
+  }, [onClose, anchorRef]);
+
+  useEffect(() => {
+    panelRef.current?.querySelector("input, textarea")?.focus();
+  }, []);
+
+  if (!pos) return null;
+
+  return createPortal(
+    <div
+      ref={panelRef}
+      role="dialog"
+      aria-label={title}
+      style={{
+        position: "fixed",
+        left: pos.left,
+        ...(pos.bottom !== undefined ? { bottom: pos.bottom } : { top: pos.top }),
+        width: pos.width,
+        zIndex: 90,
+      }}
+      className="rounded-xl border border-neutral-200 bg-white shadow-xl"
+    >
+      <div className="border-b border-neutral-100 px-4 py-2.5">
+        <p className="truncate text-sm font-semibold text-neutral-900">{title}</p>
+        {subtitle && <p className="mt-0.5 truncate text-xs text-neutral-500">{subtitle}</p>}
+      </div>
+      <div className="space-y-3 px-4 py-3">
+        <div>
+          <label
+            htmlFor="manage-popover-assignee"
+            className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+          >
+            Assigned to
+          </label>
+          <input
+            id="manage-popover-assignee"
+            type="text"
+            value={assignee}
+            onChange={(e) => onAssigneeChange(e.target.value)}
+            placeholder="admin@example.com"
+            disabled={saving}
+            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none transition focus:border-[#9BE749] focus:ring-2 focus:ring-[#9BE749]/40 disabled:opacity-60"
+          />
+          <p className="mt-1 text-xs text-neutral-400">Leave empty to unassign.</p>
+        </div>
+        <div>
+          <label
+            htmlFor="manage-popover-notes"
+            className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+          >
+            Internal notes
+          </label>
+          <textarea
+            id="manage-popover-notes"
+            value={notes}
+            onChange={(e) => onNotesChange(e.target.value)}
+            placeholder="Add context for the team — e.g. called back, waiting on docs…"
+            maxLength={3000}
+            rows={3}
+            disabled={saving}
+            className="w-full resize-y rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm leading-6 text-neutral-900 placeholder:text-neutral-400 outline-none transition focus:border-[#9BE749] focus:ring-2 focus:ring-[#9BE749]/40 disabled:opacity-60"
+          />
+          <p className="mt-0.5 text-right text-xs text-neutral-400">{notes.length}/3000</p>
+        </div>
+      </div>
+      <div className="flex items-center justify-end gap-2 border-t border-neutral-100 bg-neutral-50/60 px-4 py-2.5">
+        <AdminButton variant="ghost" size="sm" onClick={onClose} disabled={saving}>
+          Cancel
+        </AdminButton>
+        <AdminButton variant="primary" size="sm" onClick={onSave} disabled={saving}>
+          {saving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              Saving…
+            </>
+          ) : (
+            <>
+              <Check className="h-4 w-4" aria-hidden="true" />
+              Save
+            </>
+          )}
+        </AdminButton>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function MessageCell({ message, onViewFull }) {
+  const full = String(message || "—");
+  const isLong = full.length > MESSAGE_PREVIEW_LENGTH;
+  const [hovering, setHovering] = useState(false);
+  const anchorRef = useRef(null);
+  const closeTimer = useRef(null);
+
+  const open = () => {
+    if (!isLong) return;
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setHovering(true);
+  };
+
+  const close = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setHovering(false), 120);
+  };
+
+  useEffect(
+    () => () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    },
+    []
+  );
+
+  return (
+    <div className="w-[280px] max-w-[280px]">
+      <p
+        ref={anchorRef}
+        tabIndex={isLong ? 0 : undefined}
+        onMouseEnter={open}
+        onMouseLeave={close}
+        onFocus={open}
+        onBlur={close}
+        className="line-clamp-2 whitespace-pre-wrap break-words text-sm leading-5 text-neutral-700"
+      >
+        {truncatePreview(full)}
+      </p>
+      {isLong && hovering && (
+        <MessageHoverPreview
+          anchorRef={anchorRef}
+          text={full}
+        />
+      )}
+      {isLong && (
+        <button
+          type="button"
+          onClick={onViewFull}
+          onMouseEnter={open}
+          className="mt-1 inline-flex items-center gap-1 rounded text-xs font-semibold text-neutral-600 hover:text-neutral-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9BE749]/60"
+        >
+          <Eye className="h-3 w-3" aria-hidden="true" />
+          View full
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function ContactMessagesSection({ onUnreadCountChange }) {
   const [messages, setMessages] = useState([]);
@@ -99,10 +368,37 @@ export default function ContactMessagesSection({ onUnreadCountChange }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Inline editing state
+  // Inline editing state (status / priority stay inline - small selects)
   const [editingId, setEditingId] = useState(null);
   const [editField, setEditField] = useState(null);
   const [editValue, setEditValue] = useState("");
+
+  // Floating-card editor for Assignee + Notes - roomy inputs instead of
+  // cramped in-table fields. Anchored popover (portal) per row.
+  const [manageTarget, setManageTarget] = useState(null);
+  const [manageAssignee, setManageAssignee] = useState("");
+  const [manageNotes, setManageNotes] = useState("");
+  const [manageSaving, setManageSaving] = useState(false);
+  const manageAnchorRef = useRef(null);
+
+  const openManageCard = (message, anchorEl) => {
+    if (anchorEl) manageAnchorRef.current = anchorEl;
+    setManageTarget(message);
+    setManageAssignee(message?.assignedTo || "");
+    setManageNotes(message?.notes || "");
+    setError("");
+  };
+
+  const closeManageCard = () => {
+    if (manageSaving) return;
+    setManageTarget(null);
+    setManageAssignee("");
+    setManageNotes("");
+  };
+
+  // Full-message reader (existing AdminModal) — keeps long enquiries
+  // readable without stretching the table.
+  const [viewingMessage, setViewingMessage] = useState(null);
 
   const fetchMessages = async (
     nextPage = page,
@@ -267,68 +563,6 @@ export default function ContactMessagesSection({ onUnreadCountChange }) {
     }
   };
 
-  const handleAssignChange = async (messageId, newAssignee) => {
-    try {
-      setActionLoading(messageId);
-      const response = await fetchWithCsrf(
-        `/api/admin/contact-messages/${encodeURIComponent(messageId)}/assign`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ assignedTo: newAssignee }),
-        }
-      );
-
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        setError(result.message || "Failed to assign ticket");
-        return;
-      }
-
-      setMessages((prev) =>
-        prev.map((m) => (m._id === messageId ? { ...m, assignedTo: newAssignee } : m))
-      );
-      setSuccess("Ticket assigned");
-      setEditingId(null);
-    } catch {
-      setError("Failed to assign ticket");
-    } finally {
-      setActionLoading("");
-    }
-  };
-
-  const handleNotesChange = async (messageId, newNotes) => {
-    try {
-      setActionLoading(messageId);
-      const response = await fetchWithCsrf(
-        `/api/admin/contact-messages/${encodeURIComponent(messageId)}/notes`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ notes: newNotes }),
-        }
-      );
-
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        setError(result.message || "Failed to update notes");
-        return;
-      }
-
-      setMessages((prev) =>
-        prev.map((m) => (m._id === messageId ? { ...m, notes: newNotes } : m))
-      );
-      setSuccess("Notes updated");
-      setEditingId(null);
-    } catch {
-      setError("Failed to update notes");
-    } finally {
-      setActionLoading("");
-    }
-  };
-
   const handleDelete = async (messageId) => {
     if (!window.confirm("Are you sure you want to delete this message?")) {
       return;
@@ -382,401 +616,546 @@ export default function ContactMessagesSection({ onUnreadCountChange }) {
       await handleStatusChange(editingId, editValue);
     } else if (editField === "priority") {
       await handlePriorityChange(editingId, editValue);
-    } else if (editField === "assignedTo") {
-      await handleAssignChange(editingId, editValue);
-    } else if (editField === "notes") {
-      await handleNotesChange(editingId, editValue);
     }
   };
 
-  return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <p className="text-slate-600 text-sm mt-1">
-            Total: <span className="font-semibold">{pagination.total || 0}</span> | Unread:{" "}
-            <span className="font-semibold">{stats.unreadCount || 0}</span>
+  const saveManageCard = async () => {
+    if (!manageTarget?._id || manageSaving) return;
+    const messageId = manageTarget._id;
+    const nextAssignee = manageAssignee.trim();
+    const nextNotes = manageNotes.trim();
+    const assigneeChanged = nextAssignee !== String(manageTarget.assignedTo || "");
+    const notesChanged = nextNotes !== String(manageTarget.notes || "");
+    if (!assigneeChanged && !notesChanged) {
+      closeManageCard();
+      return;
+    }
+    try {
+      setManageSaving(true);
+      setActionLoading(messageId);
+      setError("");
+      if (assigneeChanged) {
+        const response = await fetchWithCsrf(
+          `/api/admin/contact-messages/${encodeURIComponent(messageId)}/assign`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ assignedTo: nextAssignee }),
+          }
+        );
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          setError(result.message || "Failed to assign ticket");
+          return;
+        }
+      }
+      if (notesChanged) {
+        const response = await fetchWithCsrf(
+          `/api/admin/contact-messages/${encodeURIComponent(messageId)}/notes`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ notes: nextNotes }),
+          }
+        );
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          setError(result.message || "Failed to update notes");
+          return;
+        }
+      }
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId ? { ...m, assignedTo: nextAssignee, notes: nextNotes } : m
+        )
+      );
+      if (viewingMessage?._id === messageId) {
+        setViewingMessage((prev) =>
+          prev ? { ...prev, assignedTo: nextAssignee, notes: nextNotes } : prev
+        );
+      }
+      setManageTarget((prev) =>
+        prev ? { ...prev, assignedTo: nextAssignee, notes: nextNotes } : prev
+      );
+      setSuccess("Assignee and notes updated");
+      closeManageCard();
+    } catch {
+      setError("Failed to update assignee / notes");
+    } finally {
+      setManageSaving(false);
+      setActionLoading("");
+    }
+  };
+
+  const refresh = () =>
+    fetchMessages(
+      page,
+      debouncedSearch,
+      readStatus,
+      ticketStatus,
+      priority,
+      assignedTo,
+      subject
+    );
+
+  const clearFilters = () => {
+    setSearch("");
+    setReadStatus("all");
+    setTicketStatus("all");
+    setPriority("all");
+    setAssignedTo("all");
+    setSubject("all");
+    setPage(1);
+  };
+
+  const hasActiveFilters =
+    search.trim() !== "" ||
+    readStatus !== "all" ||
+    ticketStatus !== "all" ||
+    priority !== "all" ||
+    assignedTo !== "all" ||
+    subject !== "all";
+
+  const editControlClass =
+    "w-full rounded-lg border border-neutral-300 bg-white px-2 py-1.5 text-xs text-neutral-900 outline-none transition focus:border-[#9BE749] focus:ring-2 focus:ring-[#9BE749]/40";
+
+  const iconActionClass =
+    "inline-flex h-7 w-7 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 transition hover:bg-neutral-50 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9BE749]/60";
+
+  const messageColumns = [
+    {
+      key: "from",
+      header: "From",
+      cellClassName: "align-top",
+      render: (m) => (
+        <div className="min-w-0 max-w-[200px]">
+          <p className="truncate text-sm font-semibold text-neutral-900" title={m.name || "—"}>
+            {m.name || "—"}
+          </p>
+          <p className="mt-0.5 truncate text-xs text-neutral-500" title={m.email || "—"}>
+            {m.email || "—"}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() =>
-            fetchMessages(
-              page,
-              debouncedSearch,
-              readStatus,
-              ticketStatus,
-              priority,
-              assignedTo,
-              subject
-            )
-          }
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-white font-semibold hover:bg-emerald-600 transition"
+      ),
+    },
+    {
+      key: "reference",
+      header: "Reference",
+      cellClassName: "align-top",
+      render: (m) => (
+        <span
+          className="block max-w-[110px] truncate font-mono text-xs text-neutral-500"
+          title={m.referenceId || "N/A"}
         >
-          <RefreshCw className="w-4 h-4" /> Refresh
-        </button>
-      </div>
-
-      {/* Alerts */}
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700 text-sm">
-          {success}
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-        {/* Search */}
-        <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or email..."
-            className="w-full rounded-lg border border-slate-200 px-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-          />
-        </div>
-
-        {/* Filter Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <select
-            value={readStatus}
-            onChange={(e) => setReadStatus(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          {truncateText(m.referenceId || "N/A", 13)}
+        </span>
+      ),
+    },
+    {
+      key: "subject",
+      header: "Subject",
+      cellClassName: "align-top",
+      render: (m) => {
+        const label = formatSubject(m.subject);
+        return (
+          <span
+            className="block max-w-[170px] truncate text-sm text-neutral-700"
+            title={label}
           >
-            <option value="all">Read Status: All</option>
-            <option value="read">Read</option>
-            <option value="unread">Unread</option>
-          </select>
-
+            {label}
+          </span>
+        );
+      },
+    },
+    {
+      key: "message",
+      header: "Message",
+      cellClassName: "align-top",
+      render: (m) => (
+        <MessageCell message={m.message} onViewFull={() => setViewingMessage(m)} />
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      cellClassName: "align-top",
+      render: (m) =>
+        editingId === m._id && editField === "status" ? (
           <select
-            value={ticketStatus}
-            onChange={(e) => setTicketStatus(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className={editControlClass}
+            aria-label="Ticket status"
           >
-            <option value="all">Status: All</option>
             <option value="pending">Pending</option>
             <option value="in_progress">In Progress</option>
             <option value="resolved">Resolved</option>
             <option value="rejected">Rejected</option>
           </select>
-
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+        ) : (
+          <button
+            type="button"
+            onClick={() => startEdit(m._id, "status", m.status)}
+            title="Click to change status"
+            className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9BE749]/60"
           >
-            <option value="all">Priority: All</option>
+            <AdminBadge
+              tone={STATUS_BADGE_TONE[m.status] || "neutral"}
+              dot
+              className="cursor-pointer capitalize hover:opacity-80"
+            >
+              {formatStatusLabel(m.status)}
+            </AdminBadge>
+          </button>
+        ),
+    },
+    {
+      key: "priority",
+      header: "Priority",
+      cellClassName: "align-top",
+      render: (m) =>
+        editingId === m._id && editField === "priority" ? (
+          <select
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className={editControlClass}
+            aria-label="Priority"
+          >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-
-          <input
-            type="text"
-            value={assignedTo}
-            onChange={(e) => setAssignedTo(e.target.value)}
-            placeholder="Filter by assignee..."
-            className="rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
-          />
-
-          <select
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
-          >
-            <option value="all">Subject: All</option>
-            {SUBJECT_VALUES.map((value) => (
-              <option key={value} value={value}>
-                {SUBJECT_LABELS[value]}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-        {loading ? (
-          <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-500">
-            <Loader2 className="w-7 h-7 animate-spin text-emerald-600" />
-            <p className="text-sm font-medium">Loading messages...</p>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="py-12 text-center text-slate-500 space-y-1">
-            <p className="font-semibold text-slate-700">No messages found</p>
-            <p className="text-sm">Try adjusting your filters</p>
-          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Reference ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    From
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Subject
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Message
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Priority
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Assigned To
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Notes
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Date
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {messages.map((m) => (
-                  <tr
-                    key={m._id}
-                    className={`border-b border-slate-100 hover:bg-slate-50/70 ${
-                      m.priority === "high" ? "bg-red-50/30" : ""
-                    } ${!m.isRead ? "bg-amber-50/40" : ""}`}
-                  >
-                    {/* Reference ID */}
-                    <td
-                      className="px-4 py-3 text-xs text-slate-700 font-mono"
-                      title={m.referenceId || "N/A"}
-                    >
-                      {truncateText(m.referenceId || "N/A", 13)}
-                    </td>
+          <button
+            type="button"
+            onClick={() => startEdit(m._id, "priority", m.priority)}
+            title="Click to change priority"
+            className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9BE749]/60"
+          >
+            <AdminBadge
+              tone={PRIORITY_BADGE_TONE[m.priority] || "neutral"}
+              dot
+              className="cursor-pointer capitalize hover:opacity-80"
+            >
+              {m.priority || "—"}
+            </AdminBadge>
+          </button>
+        ),
+    },
+    {
+      key: "assign",
+      header: "Assign / Notes",
+      cellClassName: "align-top",
+      render: (m) => (
+        <button
+          type="button"
+          onClick={(e) => openManageCard(m, e.currentTarget)}
+          title="Click to assign or add notes"
+          className="group block w-[180px] max-w-[180px] rounded-lg border border-neutral-200 px-2.5 py-2 text-left transition hover:border-neutral-300 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9BE749]/60"
+        >
+          <span className="flex items-center gap-1.5">
+            <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral-800">
+              {m.assignedTo || "Unassigned"}
+            </span>
+            <Pencil className="h-3 w-3 shrink-0 text-neutral-300 group-hover:text-neutral-500" aria-hidden="true" />
+          </span>
+          <span className="mt-1 block">
+            {m.notes ? (
+              <span className="line-clamp-2 block break-words text-xs text-neutral-500">
+                {m.notes}
+              </span>
+            ) : (
+              <span className="text-xs italic text-neutral-400">No notes — click to add</span>
+            )}
+          </span>
+        </button>
+      ),
+    },
+    {
+      key: "date",
+      header: "Date",
+      cellClassName: "align-top whitespace-nowrap",
+      render: (m) => (
+        <span className="text-xs text-neutral-500" title={formatDateTime(m.createdAt)}>
+          {formatDateTime(m.createdAt)}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      align: "right",
+      cellClassName: "align-top",
+      render: (m) =>
+        editingId === m._id ? (
+          <span className="inline-flex items-center gap-1">
+            <button
+              type="button"
+              onClick={saveEdit}
+              disabled={actionLoading === m._id}
+              title="Save"
+              aria-label="Save changes"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 transition hover:bg-emerald-200 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
+            >
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={cancelEdit}
+              disabled={actionLoading === m._id}
+              title="Cancel"
+              aria-label="Cancel editing"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 transition hover:bg-neutral-200 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400/50"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setViewingMessage(m)}
+              title="View full message"
+              aria-label="View full message"
+              className={iconActionClass}
+            >
+              <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleToggleRead(m._id, m.isRead)}
+              disabled={actionLoading === m._id}
+              title={m.isRead ? "Mark unread" : "Mark read"}
+              aria-label={m.isRead ? "Mark unread" : "Mark read"}
+              className={iconActionClass}
+            >
+              {m.isRead ? (
+                <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : (
+                <MailOpen className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDelete(m._id)}
+              disabled={actionLoading === m._id}
+              title="Delete"
+              aria-label="Delete message"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-red-200 text-red-600 transition hover:bg-red-50 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </span>
+        ),
+    },
+  ];
 
-                    {/* From */}
-                    <td className="px-4 py-3 text-xs text-slate-700">
-                      <div>
-                        <p className="font-semibold">{m.name}</p>
-                        <p className="text-slate-500">{m.email}</p>
-                      </div>
-                    </td>
+  return (
+    <AdminSection
+      toolbar={
+        <AdminToolbar
+          actions={
+            <>
+              <span className="text-sm text-neutral-500">
+                Total: <span className="font-semibold text-neutral-900">{pagination.total || 0}</span>
+                {"  "}| Unread:{" "}
+                <span className="font-semibold text-neutral-900">{stats.unreadCount || 0}</span>
+              </span>
+              <AdminButton variant="secondary" size="sm" onClick={refresh} disabled={loading}>
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                Refresh
+              </AdminButton>
+              {hasActiveFilters && (
+                <AdminButton variant="ghost" size="sm" onClick={clearFilters}>
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                  Clear
+                </AdminButton>
+              )}
+            </>
+          }
+        >
+          <AdminSearchInput
+            id="admin-messages-search"
+            label="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClear={() => setSearch("")}
+            placeholder="Name, email, message…"
+            className="sm:w-64"
+          />
+          <AdminToolbarField label="Read" htmlFor="admin-messages-read" width="w-full sm:w-36">
+            <AdminSelect
+              id="admin-messages-read"
+              value={readStatus}
+              onChange={(e) => setReadStatus(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="read">Read</option>
+              <option value="unread">Unread</option>
+            </AdminSelect>
+          </AdminToolbarField>
+          <AdminToolbarField label="Status" htmlFor="admin-messages-status" width="w-full sm:w-40">
+            <AdminSelect
+              id="admin-messages-status"
+              value={ticketStatus}
+              onChange={(e) => setTicketStatus(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="rejected">Rejected</option>
+            </AdminSelect>
+          </AdminToolbarField>
+          {/* __MORE_FILTERS__ */}
+          <AdminToolbarField label="Priority" htmlFor="admin-messages-priority" width="w-full sm:w-36">
+            <AdminSelect
+              id="admin-messages-priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </AdminSelect>
+          </AdminToolbarField>
+          <AdminToolbarField label="Assignee" htmlFor="admin-messages-assignee" width="w-full sm:w-44">
+            <input
+              id="admin-messages-assignee"
+              type="text"
+              value={assignedTo === "all" ? "" : assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value === "" ? "all" : e.target.value)}
+              placeholder="Filter by assignee…"
+              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none transition focus:border-[#9BE749] focus:ring-2 focus:ring-[#9BE749]/40"
+            />
+          </AdminToolbarField>
+          <AdminToolbarField label="Subject" htmlFor="admin-messages-subject" width="w-full sm:w-48">
+            <AdminSelect
+              id="admin-messages-subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+            >
+              <option value="all">All subjects</option>
+              {SUBJECT_VALUES.map((value) => (
+                <option key={value} value={value}>
+                  {SUBJECT_LABELS[value]}
+                </option>
+              ))}
+            </AdminSelect>
+          </AdminToolbarField>
+        </AdminToolbar>
+      }
+      footer={
+        (pagination.total || 0) > 0 ? (
+          <AdminPagination
+            page={pagination.page || page}
+            totalPages={pagination.totalPages || 1}
+            totalItems={pagination.total || 0}
+            pageSize={pagination.limit || 10}
+            onPageChange={setPage}
+            disabled={loading}
+            itemLabel="messages"
+            emptyMessage="No messages to display on this page."
+          />
+        ) : null
+      }
+    >
+      {/* __SECTION_BODY__ */}
+      {error && (
+        <div role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div role="status" className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {success}
+        </div>
+      )}
 
-                    {/* Subject */}
-                    <td className="px-4 py-3 text-xs text-slate-700">
-                      <span className="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold bg-sky-100 text-sky-700">
-                        {formatSubject(m.subject)}
-                      </span>
-                    </td>
-
-                    {/* Message */}
-                    <td className="px-4 py-3 text-xs text-slate-700 max-w-xs">
-                      <p className="line-clamp-2 whitespace-pre-wrap">{m.message}</p>
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-4 py-3">
-                      {editingId === m._id && editField === "status" ? (
-                        <select
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="in_progress">In Progress</option>
-                          <option value="resolved">Resolved</option>
-                          <option value="rejected">Rejected</option>
-                        </select>
-                      ) : (
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold cursor-pointer hover:opacity-80 ${getStatusColor(
-                            m.status
-                          )}`}
-                          onClick={() =>
-                            startEdit(m._id, "status", m.status)
-                          }
-                          title="Click to edit"
-                        >
-                          {m.status.replace("_", " ")}
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Priority */}
-                    <td className="px-4 py-3">
-                      {editingId === m._id && editField === "priority" ? (
-                        <select
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                        >
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                        </select>
-                      ) : (
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold border cursor-pointer hover:opacity-80 ${getPriorityColor(
-                            m.priority
-                          )}`}
-                          onClick={() =>
-                            startEdit(m._id, "priority", m.priority)
-                          }
-                          title="Click to edit"
-                        >
-                          {m.priority}
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Assigned To */}
-                    <td className="px-4 py-3 text-xs text-slate-700 max-w-xs">
-                      {editingId === m._id && editField === "assignedTo" ? (
-                        <input
-                          type="email"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          placeholder="admin@example.com"
-                          className="w-full text-xs px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                        />
-                      ) : (
-                        <p
-                          className="cursor-pointer hover:bg-slate-100 p-1 rounded"
-                          onClick={() =>
-                            startEdit(m._id, "assignedTo", m.assignedTo)
-                          }
-                          title="Click to edit"
-                        >
-                          {m.assignedTo ? (
-                            <span className="font-semibold">{truncateText(m.assignedTo, 18)}</span>
-                          ) : (
-                            <span className="text-slate-400 italic">Unassigned</span>
-                          )}
-                        </p>
-                      )}
-                    </td>
-
-                    {/* Notes */}
-                    <td className="px-4 py-3 text-xs text-slate-700 max-w-xs">
-                      {editingId === m._id && editField === "notes" ? (
-                        <textarea
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          placeholder="Add internal notes..."
-                          maxLength={3000}
-                          rows={2}
-                          className="w-full text-xs px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                        />
-                      ) : (
-                        <p
-                          className="line-clamp-2 cursor-pointer hover:bg-slate-100 p-1 rounded"
-                          onClick={() => startEdit(m._id, "notes", m.notes)}
-                          title="Click to edit"
-                        >
-                          {m.notes ? (
-                            <span>{truncateText(m.notes, 25)}</span>
-                          ) : (
-                            <span className="text-slate-400 italic">No notes</span>
-                          )}
-                        </p>
-                      )}
-                    </td>
-
-                    {/* Date */}
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {formatDateTime(m.createdAt)}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-4 py-3">
-                      {editingId === m._id ? (
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={saveEdit}
-                            disabled={actionLoading === m._id}
-                            className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-200 disabled:opacity-50"
-                            title="Save"
-                          >
-                            <Check className="w-3 h-3" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={cancelEdit}
-                            disabled={actionLoading === m._id}
-                            className="inline-flex items-center gap-1 rounded-md bg-red-100 px-2 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-200 disabled:opacity-50"
-                            title="Cancel"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 flex-wrap">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleToggleRead(m._id, m.isRead)
-                            }
-                            disabled={actionLoading === m._id}
-                            className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-50"
-                            title={m.isRead ? "Mark unread" : "Mark read"}
-                          >
-                            {m.isRead ? (
-                              <Mail className="w-3 h-3" />
-                            ) : (
-                              <MailOpen className="w-3 h-3" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleDelete(m._id)
-                            }
-                            disabled={actionLoading === m._id}
-                            className="inline-flex items-center gap-1 rounded-md border border-red-200 px-2 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Pagination — the shared admin control. This endpoint is already
-          server-side paginated (`?page=&limit=`), so the values the API
-          returned are passed straight through. */}
-      {(pagination.total || 0) > 0 && (
-        <AdminPagination
-          page={pagination.page || page}
-          totalPages={pagination.totalPages || 1}
-          totalItems={pagination.total || 0}
-          pageSize={pagination.limit || 10}
-          onPageChange={setPage}
-          disabled={loading}
-          itemLabel="messages"
-          emptyMessage="No messages to display on this page."
+      {loading ? (
+        <AdminTable columns={messageColumns} rows={[]} loading loadingRows={8} minWidth={1180} />
+      ) : messages.length === 0 ? (
+        <AdminEmptyState
+          title="No messages found"
+          description={
+            hasActiveFilters
+              ? "No messages match the current filters. Try clearing them."
+              : "There are no contact enquiries yet."
+          }
+          actionLabel={hasActiveFilters ? "Clear filters" : undefined}
+          onAction={hasActiveFilters ? clearFilters : undefined}
+          icon={Inbox}
+        />
+      ) : (
+        <AdminTable
+          columns={messageColumns}
+          rows={messages}
+          getRowKey={(m) => m._id}
+          minWidth={1180}
+          rowClassName={(m) =>
+            `${!m.isRead ? "bg-amber-50/40" : ""} ${m.priority === "high" ? "bg-red-50/20" : ""}`
+          }
         />
       )}
-    </div>
+      <p className="mt-3 text-xs text-neutral-400">
+        Tip: hover a message for the full text, or click “View full” / the eye icon for a focused reader. Click Assign / Notes to edit both in one floating card.
+      </p>
+
+      {manageTarget && (
+        <ManagePopover
+          anchorRef={manageAnchorRef}
+          title={`Assign · ${manageTarget.name || "Message"}`}
+          subtitle={manageTarget.email || undefined}
+          assignee={manageAssignee}
+          onAssigneeChange={setManageAssignee}
+          notes={manageNotes}
+          onNotesChange={setManageNotes}
+          saving={manageSaving}
+          onClose={closeManageCard}
+          onSave={saveManageCard}
+        />
+      )}
+
+      {viewingMessage && (
+        <AdminModal
+          open
+          onClose={() => setViewingMessage(null)}
+          title={viewingMessage.name || "Message"}
+          description={viewingMessage.email || undefined}
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+            {formatSubject(viewingMessage.subject)}
+            {viewingMessage.referenceId ? ` · ${viewingMessage.referenceId}` : ""}
+          </p>
+          <p className="mt-2 max-h-64 overflow-y-auto whitespace-pre-wrap break-words text-sm leading-6 text-neutral-800">
+            {viewingMessage.message}
+          </p>
+          {viewingMessage.notes && (
+            <div className="mt-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                Internal notes
+              </p>
+              <p className="mt-1 whitespace-pre-wrap break-words text-sm text-neutral-700">
+                {viewingMessage.notes}
+              </p>
+            </div>
+          )}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <AdminBadge tone={STATUS_BADGE_TONE[viewingMessage.status] || "neutral"} dot className="capitalize">
+              {formatStatusLabel(viewingMessage.status)}
+            </AdminBadge>
+            <AdminBadge tone={PRIORITY_BADGE_TONE[viewingMessage.priority] || "neutral"} dot className="capitalize">
+              {viewingMessage.priority || "—"} priority
+            </AdminBadge>
+            <span className="ml-auto text-xs text-neutral-500">
+              {formatDateTime(viewingMessage.createdAt)}
+            </span>
+          </div>
+        </AdminModal>
+      )}
+    </AdminSection>
   );
 }

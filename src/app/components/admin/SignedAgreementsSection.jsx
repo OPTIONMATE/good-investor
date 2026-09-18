@@ -9,6 +9,7 @@ import AdminBadge from "./ui/AdminBadge";
 import AdminEmptyState from "./ui/AdminEmptyState";
 import AdminPagination from "./ui/AdminPagination";
 import AdminButton from "./ui/AdminButton";
+import AdminSelect from "./ui/AdminSelect";
 import { AdminSearchInput, AdminToolbar } from "./ui/AdminToolbar";
 import { usePagination } from "./ui/usePagination";
 
@@ -17,8 +18,9 @@ import { usePagination } from "./ui/usePagination";
  *
  * Logic preserved exactly: email filter, `download-pdf` POST via
  * fetchWithCsrf, per-row `downloadingId`, `downloadError` alert. Only the
- * markup changed (AdminSection shell + AdminTable + AdminBadge) and the
- * shared AdminPagination footer was added.
+ * markup changed (AdminSection shell + AdminTable + AdminBadge), the shared
+ * AdminPagination footer was added, and a "Sort by" control (same AdminSelect
+ * pattern as UsersSection) was added to the toolbar.
  */
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -27,6 +29,7 @@ const formatSignedDate = (value) =>
 
 export default function SignedAgreementsSection({ data }) {
   const [searchEmail, setSearchEmail] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [downloadingId, setDownloadingId] = useState(null);
   const [downloadError, setDownloadError] = useState(null);
 
@@ -40,6 +43,35 @@ export default function SignedAgreementsSection({ data }) {
 
   const agreements = filteredData || [];
 
+  // Sort — same "Sort by" control as UsersSection. The array is copied first
+  // because `filteredData` can be the `data` prop itself (no email search).
+  const sortedAgreements = [...agreements].sort((a, b) => {
+    if (sortBy === "client") {
+      return String(a?.clientName || "").localeCompare(
+        String(b?.clientName || ""),
+      );
+    }
+
+    if (sortBy === "email") {
+      return String(a?.clientEmail || "").localeCompare(
+        String(b?.clientEmail || ""),
+      );
+    }
+
+    if (sortBy === "oldest") {
+      return (
+        new Date(a?.signedTimestamp || 0).getTime() -
+        new Date(b?.signedTimestamp || 0).getTime()
+      );
+    }
+
+    // Default: most recently signed first
+    return (
+      new Date(b?.signedTimestamp || 0).getTime() -
+      new Date(a?.signedTimestamp || 0).getTime()
+    );
+  });
+
   const {
     page,
     pageSize,
@@ -48,7 +80,9 @@ export default function SignedAgreementsSection({ data }) {
     pagedItems,
     setPage,
     setPageSize,
-  } = usePagination(agreements, DEFAULT_PAGE_SIZE, { resetKey: searchEmail });
+  } = usePagination(sortedAgreements, DEFAULT_PAGE_SIZE, {
+    resetKey: `${searchEmail}|${sortBy}`,
+  });
 
   const handleDownload = async (agreementId, clientEmail) => {
     setDownloadingId(agreementId);
@@ -198,6 +232,24 @@ export default function SignedAgreementsSection({ data }) {
             placeholder="Enter client email…"
             className="sm:w-80"
           />
+          <div className="w-full sm:w-52">
+            <label
+              htmlFor="admin-agreements-sort"
+              className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+            >
+              Sort by
+            </label>
+            <AdminSelect
+              id="admin-agreements-sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="newest">Newest signed first</option>
+              <option value="oldest">Oldest signed first</option>
+              <option value="client">Client name</option>
+              <option value="email">Client email</option>
+            </AdminSelect>
+          </div>
         </AdminToolbar>
       }
       footer={

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { IdCard, MapPin, UserRound } from "lucide-react";
 import AdminSection from "./ui/AdminSection";
 import AdminTable from "./ui/AdminTable";
@@ -9,6 +9,8 @@ import AdminEmptyState from "./ui/AdminEmptyState";
 import AdminPagination from "./ui/AdminPagination";
 import AdminButton from "./ui/AdminButton";
 import AdminModal from "./ui/AdminModal";
+import AdminSelect from "./ui/AdminSelect";
+import { AdminToolbar } from "./ui/AdminToolbar";
 import { usePagination } from "./ui/usePagination";
 
 /**
@@ -16,7 +18,8 @@ import { usePagination } from "./ui/usePagination";
  *
  * Same `data` prop and same "View Profile" detail modal; now built from the
  * shared AdminSection / AdminTable / AdminBadge / AdminModal primitives with
- * the shared AdminPagination footer.
+ * the shared AdminPagination footer. A "Sort by" control (same AdminSelect
+ * pattern as UsersSection) was added to the toolbar.
  */
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -33,7 +36,34 @@ const formatDate = (value) => {
 
 export default function RiskProfilesSection({ data }) {
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const profiles = data || [];
+  const [sortBy, setSortBy] = useState("newest");
+
+  // Filter/sort signature -> page 1 whenever the sort changes.
+  const sortedProfiles = useMemo(() => {
+    const rows = [...(data || [])];
+
+    rows.sort((a, b) => {
+      if (sortBy === "name") {
+        return String(a?.fullName || "").localeCompare(String(b?.fullName || ""));
+      }
+
+      if (sortBy === "email") {
+        return String(a?.email || "").localeCompare(String(b?.email || ""));
+      }
+
+      if (sortBy === "state") {
+        return String(a?.state || "").localeCompare(String(b?.state || ""));
+      }
+
+      // Default: newest submission first
+      return (
+        new Date(b?.createdAt || 0).getTime() -
+        new Date(a?.createdAt || 0).getTime()
+      );
+    });
+
+    return rows;
+  }, [data, sortBy]);
 
   const {
     page,
@@ -43,7 +73,7 @@ export default function RiskProfilesSection({ data }) {
     pagedItems,
     setPage,
     setPageSize,
-  } = usePagination(profiles, DEFAULT_PAGE_SIZE);
+  } = usePagination(sortedProfiles, DEFAULT_PAGE_SIZE, { resetKey: sortBy });
 
   if (!data || data.length === 0) {
     return (
@@ -142,6 +172,37 @@ export default function RiskProfilesSection({ data }) {
   return (
     <>
       <AdminSection
+        toolbar={
+          <AdminToolbar
+            actions={
+              <span className="text-sm text-neutral-500">
+                Total:{" "}
+                <span className="font-semibold text-neutral-900">
+                  {totalItems}
+                </span>
+              </span>
+            }
+          >
+            <div className="w-full sm:w-52">
+              <label
+                htmlFor="admin-risk-sort"
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+              >
+                Sort by
+              </label>
+              <AdminSelect
+                id="admin-risk-sort"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Newest first</option>
+                <option value="name">Name</option>
+                <option value="email">Email</option>
+                <option value="state">State</option>
+              </AdminSelect>
+            </div>
+          </AdminToolbar>
+        }
         footer={
           <AdminPagination
             page={page}

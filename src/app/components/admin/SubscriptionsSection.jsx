@@ -13,6 +13,7 @@ import AdminTable from "./ui/AdminTable";
 import AdminBadge from "./ui/AdminBadge";
 import AdminEmptyState from "./ui/AdminEmptyState";
 import AdminPagination from "./ui/AdminPagination";
+import AdminSelect from "./ui/AdminSelect";
 import { AdminFilterTabs, AdminToolbar } from "./ui/AdminToolbar";
 import { usePagination } from "./ui/usePagination";
 
@@ -21,7 +22,8 @@ import { usePagination } from "./ui/usePagination";
  *
  * Same fetch (`/api/admin/payments`), same all/active/expired filter and same
  * totals; restyled with AdminStatCard + AdminTable and paginated with the
- * shared AdminPagination.
+ * shared AdminPagination. A "Sort by" control (same AdminSelect pattern as
+ * UsersSection) was added to the toolbar.
  */
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -30,6 +32,7 @@ export default function SubscriptionsSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all"); // all, active, expired
+  const [sortBy, setSortBy] = useState("newest");
 
   const fetchAllPayments = async () => {
     try {
@@ -86,6 +89,38 @@ export default function SubscriptionsSection() {
   const activeCount = payments.filter((p) => !isExpired(p.expiresAt)).length;
   const expiredCount = payments.filter((p) => isExpired(p.expiresAt)).length;
 
+  // Sort — same "Sort by" control as UsersSection, applied after the
+  // all/active/expired filter so it only reorders what is on screen.
+  const sortedPayments = [...filteredPayments].sort((a, b) => {
+    if (sortBy === "name") {
+      return String(a?.name || "").localeCompare(String(b?.name || ""));
+    }
+
+    if (sortBy === "email") {
+      return String(a?.email || "").localeCompare(String(b?.email || ""));
+    }
+
+    if (sortBy === "amountHigh") {
+      return Number(b?.amount || 0) - Number(a?.amount || 0);
+    }
+
+    if (sortBy === "amountLow") {
+      return Number(a?.amount || 0) - Number(b?.amount || 0);
+    }
+
+    if (sortBy === "expires") {
+      return (
+        new Date(a?.expiresAt || 0).getTime() -
+        new Date(b?.expiresAt || 0).getTime()
+      );
+    }
+
+    // Default: most recent payment first
+    return (
+      new Date(b?.paidAt || 0).getTime() - new Date(a?.paidAt || 0).getTime()
+    );
+  });
+
   const {
     page,
     pageSize,
@@ -94,7 +129,9 @@ export default function SubscriptionsSection() {
     pagedItems,
     setPage,
     setPageSize,
-  } = usePagination(filteredPayments, DEFAULT_PAGE_SIZE, { resetKey: filter });
+  } = usePagination(sortedPayments, DEFAULT_PAGE_SIZE, {
+    resetKey: `${filter}|${sortBy}`,
+  });
 
 const columns = [
     {
@@ -257,6 +294,26 @@ return (
                 { value: "expired", label: `Expired (${expiredCount})` },
               ]}
             />
+            <div className="w-full sm:w-52">
+              <label
+                htmlFor="admin-subscriptions-sort"
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+              >
+                Sort by
+              </label>
+              <AdminSelect
+                id="admin-subscriptions-sort"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Newest first</option>
+                <option value="name">Name</option>
+                <option value="email">Email</option>
+                <option value="amountHigh">Amount (high to low)</option>
+                <option value="amountLow">Amount (low to high)</option>
+                <option value="expires">Expiring soonest</option>
+              </AdminSelect>
+            </div>
           </AdminToolbar>
         }
         footer={

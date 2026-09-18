@@ -10,11 +10,8 @@ import AdminEmptyState from "./ui/AdminEmptyState";
 import AdminPagination from "./ui/AdminPagination";
 import AdminButton from "./ui/AdminButton";
 import AdminModal from "./ui/AdminModal";
-import {
-  AdminFilterTabs,
-  AdminSearchInput,
-  AdminToolbar,
-} from "./ui/AdminToolbar";
+import AdminSelect from "./ui/AdminSelect";
+import { AdminSearchInput, AdminToolbar } from "./ui/AdminToolbar";
 import { usePagination } from "./ui/usePagination";
 
 /**
@@ -425,50 +422,55 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
   return (
     <AdminSection
       toolbar={
-        <div className="flex flex-col gap-3">
-          <AdminToolbar
-            actions={
-              <>
-                <span className="text-sm text-neutral-500">
-                  Total:{" "}
-                  <span className="font-semibold text-neutral-900">
-                    {filteredAndSortedUsers.length}
-                  </span>
+        <AdminToolbar
+          actions={
+            <>
+              <span className="text-sm text-neutral-500">
+                Total:{" "}
+                <span className="font-semibold text-neutral-900">
+                  {filteredAndSortedUsers.length}
                 </span>
-                <AdminButton
-                  variant="primary"
-                  size="sm"
-                  onClick={exportSignedUsersCsv}
-                  disabled={filteredAndSortedUsers.length === 0}
-                >
-                  <Download className="h-4 w-4" aria-hidden="true" />
-                  Export CSV
-                </AdminButton>
-              </>
-            }
-          >
-            <AdminSearchInput
-              id="signed-users-search"
-              label="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onClear={() => setSearchTerm("")}
-              placeholder="Name, email, mobile, PAN, or service…"
-              className="sm:w-96"
-            />
-          </AdminToolbar>
-          <AdminFilterTabs
-            label="Sort"
-            value={sortBy}
-            onChange={setSortBy}
-            options={[
-              { value: "dateOfConsent", label: "Date" },
-              { value: "name", label: "Name" },
-              { value: "email", label: "Email" },
-              { value: "serviceName", label: "Service" },
-            ]}
+              </span>
+              <AdminButton
+                variant="primary"
+                size="sm"
+                onClick={exportSignedUsersCsv}
+                disabled={filteredAndSortedUsers.length === 0}
+              >
+                <Download className="h-4 w-4" aria-hidden="true" />
+                Export CSV
+              </AdminButton>
+            </>
+          }
+        >
+          <AdminSearchInput
+            id="signed-users-search"
+            label="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClear={() => setSearchTerm("")}
+            placeholder="Name, email, mobile, PAN, or service…"
+            className="sm:w-80"
           />
-        </div>
+          <div className="w-full sm:w-52">
+            <label
+              htmlFor="signed-users-sort"
+              className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+            >
+              Sort by
+            </label>
+            <AdminSelect
+              id="signed-users-sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="dateOfConsent">Newest consent first</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="serviceName">Service</option>
+            </AdminSelect>
+          </div>
+        </AdminToolbar>
       }
       footer={
         totalItems > 0 ? (
