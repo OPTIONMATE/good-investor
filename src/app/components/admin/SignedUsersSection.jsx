@@ -10,11 +10,8 @@ import AdminEmptyState from "./ui/AdminEmptyState";
 import AdminPagination from "./ui/AdminPagination";
 import AdminButton from "./ui/AdminButton";
 import AdminModal from "./ui/AdminModal";
-import {
-  AdminFilterTabs,
-  AdminSearchInput,
-  AdminToolbar,
-} from "./ui/AdminToolbar";
+import AdminSelect from "./ui/AdminSelect";
+import { AdminSearchInput, AdminToolbar } from "./ui/AdminToolbar";
 import { usePagination } from "./ui/usePagination";
 
 /**
@@ -215,30 +212,34 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
       "State",
       "Service Name",
       "Agreement Mailed To User",
+      "Agreement Mailed At",
       "MITC Mailed To User",
       "KYC Updated By Admin",
       "Valid From",
       "Valid Till",
       "Renewal Date",
       "Invoice Mailed To User",
+      "Invoice Mailed At",
     ];
 
     const rows = filteredAndSortedUsers.map((u) => [
       u?.name || "",
       u?.pan || "",
       u?.dob || "",
-      formatDate(u?.dateOfConsent),
+      formatDateWithTime(u?.dateOfConsent),
       u?.email || "",
       u?.mobile || "",
       u?.state || "",
       u?.serviceName || "",
       u?.agreementMailedToUser ? "Yes" : "No",
+      formatDateWithTime(u?.agreementMailedAt),
       u?.mitcMailedToUser ? "Yes" : "No",
       u?.kycUpdatedByAdmin ? "Yes" : "No",
       formatDate(u?.validFrom),
       formatDate(u?.validTill),
       formatDate(u?.renewalDate),
       u?.invoiceMailedToUser ? "Yes" : "No",
+      formatDateWithTime(u?.invoiceMailedAt),
     ]);
 
     const csv = [headers, ...rows]
@@ -328,6 +329,15 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
       render: (u) => <MailStatusText value={u?.agreementMailedToUser} />,
     },
     {
+      key: "agreementMailedAt",
+      header: "Agreement mailed at",
+      render: (u) => (
+        <span className="text-sm text-neutral-600">
+          {formatDateWithTime(u?.agreementMailedAt)}
+        </span>
+      ),
+    },
+    {
       key: "mitcMailed",
       header: "MITC mailed",
       render: (u) => <MailStatusText value={u?.mitcMailedToUser} />,
@@ -386,6 +396,15 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
       render: (u) => <StatusBadge value={u?.invoiceMailedToUser} />,
     },
     {
+      key: "invoiceMailedAt",
+      header: "Invoice mailed at",
+      render: (u) => (
+        <span className="text-sm text-neutral-600">
+          {formatDateWithTime(u?.invoiceMailedAt)}
+        </span>
+      ),
+    },
+    {
       key: "actions",
       header: "Send agreement",
       align: "right",
@@ -425,50 +444,55 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
   return (
     <AdminSection
       toolbar={
-        <div className="flex flex-col gap-3">
-          <AdminToolbar
-            actions={
-              <>
-                <span className="text-sm text-neutral-500">
-                  Total:{" "}
-                  <span className="font-semibold text-neutral-900">
-                    {filteredAndSortedUsers.length}
-                  </span>
+        <AdminToolbar
+          actions={
+            <>
+              <span className="text-sm text-neutral-500">
+                Total:{" "}
+                <span className="font-semibold text-neutral-900">
+                  {filteredAndSortedUsers.length}
                 </span>
-                <AdminButton
-                  variant="primary"
-                  size="sm"
-                  onClick={exportSignedUsersCsv}
-                  disabled={filteredAndSortedUsers.length === 0}
-                >
-                  <Download className="h-4 w-4" aria-hidden="true" />
-                  Export CSV
-                </AdminButton>
-              </>
-            }
-          >
-            <AdminSearchInput
-              id="signed-users-search"
-              label="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onClear={() => setSearchTerm("")}
-              placeholder="Name, email, mobile, PAN, or service…"
-              className="sm:w-96"
-            />
-          </AdminToolbar>
-          <AdminFilterTabs
-            label="Sort"
-            value={sortBy}
-            onChange={setSortBy}
-            options={[
-              { value: "dateOfConsent", label: "Date" },
-              { value: "name", label: "Name" },
-              { value: "email", label: "Email" },
-              { value: "serviceName", label: "Service" },
-            ]}
+              </span>
+              <AdminButton
+                variant="primary"
+                size="sm"
+                onClick={exportSignedUsersCsv}
+                disabled={filteredAndSortedUsers.length === 0}
+              >
+                <Download className="h-4 w-4" aria-hidden="true" />
+                Export CSV
+              </AdminButton>
+            </>
+          }
+        >
+          <AdminSearchInput
+            id="signed-users-search"
+            label="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClear={() => setSearchTerm("")}
+            placeholder="Name, email, mobile, PAN, or service…"
+            className="sm:w-80"
           />
-        </div>
+          <div className="w-full sm:w-52">
+            <label
+              htmlFor="signed-users-sort"
+              className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+            >
+              Sort by
+            </label>
+            <AdminSelect
+              id="signed-users-sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="dateOfConsent">Newest consent first</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="serviceName">Service</option>
+            </AdminSelect>
+          </div>
+        </AdminToolbar>
       }
       footer={
         totalItems > 0 ? (
@@ -520,7 +544,7 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
                   <MobileField label="Mobile">{u?.mobile}</MobileField>
                   <MobileField label="State">{u?.state}</MobileField>
                   <MobileField label="Consent date">
-                    {formatDate(u?.dateOfConsent)}
+                    {formatDateWithTime(u?.dateOfConsent)}
                   </MobileField>
                   <MobileField label="Valid from">
                     {formatDate(u?.validFrom)}
@@ -530,6 +554,12 @@ export default function SignedUsersSection({ data = [], onRefresh }) {
                   </MobileField>
                   <MobileField label="Renewal">
                     {formatDate(u?.renewalDate)}
+                  </MobileField>
+                  <MobileField label="Agreement mailed at">
+                    {formatDateWithTime(u?.agreementMailedAt)}
+                  </MobileField>
+                  <MobileField label="Invoice mailed at">
+                    {formatDateWithTime(u?.invoiceMailedAt)}
                   </MobileField>
                 </dl>
 

@@ -10,6 +10,7 @@ import AdminEmptyState from "./ui/AdminEmptyState";
 import AdminPagination from "./ui/AdminPagination";
 import AdminButton from "./ui/AdminButton";
 import AdminModal from "./ui/AdminModal";
+import AdminSelect from "./ui/AdminSelect";
 import { AdminSearchInput, AdminToolbar } from "./ui/AdminToolbar";
 import { usePagination } from "./ui/usePagination";
 
@@ -19,13 +20,16 @@ import { usePagination } from "./ui/usePagination";
  * Logic preserved exactly: client-name/amount filter, `formatCurrency`,
  * `formatDate`, `download-pdf` POST via fetchWithCsrf, `downloading` flag and
  * `downloadError`. The old bespoke modal container is replaced by the shared
- * AdminModal (same content, same close behaviour + focus trap / Escape), and
- * the list is now a paginated AdminTable using the shared AdminPagination.
+ * AdminModal (same content, same close behaviour + focus trap / Escape), the
+ * list is a paginated AdminTable using the shared AdminPagination, and a
+ * "Sort by" control (same AdminSelect pattern as UsersSection) sits in the
+ * toolbar.
  */
 const DEFAULT_PAGE_SIZE = 10;
 
 export default function InvoiceSection({ data }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
@@ -44,6 +48,37 @@ export default function InvoiceSection({ data }) {
 
   const invoices = filteredData || [];
 
+  // Sort — same "Sort by" control as UsersSection. Copied first because
+  // `filteredData` can be the `data` prop itself (no active search).
+  const sortedInvoices = [...invoices].sort((a, b) => {
+    if (sortBy === "client") {
+      return String(a?.clientName || "").localeCompare(
+        String(b?.clientName || ""),
+      );
+    }
+
+    if (sortBy === "amountHigh") {
+      return Number(b?.amount || 0) - Number(a?.amount || 0);
+    }
+
+    if (sortBy === "amountLow") {
+      return Number(a?.amount || 0) - Number(b?.amount || 0);
+    }
+
+    if (sortBy === "oldest") {
+      return (
+        new Date(a?.createdAt || 0).getTime() -
+        new Date(b?.createdAt || 0).getTime()
+      );
+    }
+
+    // Default: most recently generated first
+    return (
+      new Date(b?.createdAt || 0).getTime() -
+      new Date(a?.createdAt || 0).getTime()
+    );
+  });
+
   const {
     page,
     pageSize,
@@ -52,7 +87,9 @@ export default function InvoiceSection({ data }) {
     pagedItems,
     setPage,
     setPageSize,
-  } = usePagination(invoices, DEFAULT_PAGE_SIZE, { resetKey: searchQuery });
+  } = usePagination(sortedInvoices, DEFAULT_PAGE_SIZE, {
+    resetKey: `${searchQuery}|${sortBy}`,
+  });
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
@@ -212,6 +249,25 @@ export default function InvoiceSection({ data }) {
               placeholder="Search by client name or amount…"
               className="sm:w-80"
             />
+            <div className="w-full sm:w-52">
+              <label
+                htmlFor="admin-invoices-sort"
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500"
+              >
+                Sort by
+              </label>
+              <AdminSelect
+                id="admin-invoices-sort"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="client">Client name</option>
+                <option value="amountHigh">Amount (high to low)</option>
+                <option value="amountLow">Amount (low to high)</option>
+              </AdminSelect>
+            </div>
           </AdminToolbar>
         }
         footer={

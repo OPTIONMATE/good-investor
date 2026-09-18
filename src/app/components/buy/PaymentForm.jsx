@@ -26,6 +26,7 @@ export default function PaymentForm({
   onBack,
   planData,
   userDetails,
+  agreementId,
 }) {
   const { user } = useAuth();
   const router = useRouter();
@@ -242,6 +243,9 @@ export default function PaymentForm({
                 planType: serverPricing.planType || planData?.type || "",
                 state: userDetails?.state,
                 panNumber: userDetails?.panNumber,
+                // Exact agreement this payment belongs to; validated + linked
+                // server-side in POST /api/payment/verify (never trusted blindly).
+                ...(agreementId ? { agreementId } : {}),
                 ...(appliedCoupon && { couponCode: appliedCoupon.code }),
               }),
             });

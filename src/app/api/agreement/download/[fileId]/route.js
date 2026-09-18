@@ -7,6 +7,7 @@ import Payment from "@/app/lib/models/Payment";
 import { generateCompleteAgreementPDF } from "@/app/lib/generateCompletePDF";
 import { computeFinalServiceDate, derivePurchasedDurationDays } from "@/app/lib/planValidity";
 import { sendAgreementPDFMail } from "@/app/lib/mailer";
+import { markAgreementMailed } from "@/app/lib/agreementMailTracking";
 import { requireAuth, userOwnsResource } from "@/app/lib/authServer";
 import { isValidObjectId } from "@/app/lib/validators";
 
@@ -142,6 +143,15 @@ export async function GET(req, { params }) {
         pdfBuffer,
         clientName: agreement.clientName || "User",
         clientPan: agreement.clientPan || "",
+      });
+
+      // Tracking (primary: THIS SignedAgreement; backward-compat: owner User).
+      // Runs only after the mail transport accepted the email; a tracking
+      // failure must never break the PDF download, so the helper never throws.
+      await markAgreementMailed({
+        agreementId: agreement._id,
+        mailedTo: agreementMailTo,
+        logContext: "AGREEMENT DOWNLOAD",
       });
     }
 

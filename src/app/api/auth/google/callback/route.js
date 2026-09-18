@@ -42,18 +42,27 @@ export async function GET(req) {
 
   await connectDB();
 
-  let user = await User.findOne({ email: userInfo.email });
+  // Normalize Google email for consistent lookup/storage (matches
+  // email/password registration which lowercases). Fall back to the raw
+  // profile email so legacy mixed-case accounts still match instead of
+  // creating a duplicate user.
+  const rawGoogleEmail = userInfo.email;
+  const normalizedGoogleEmail = String(rawGoogleEmail || "").toLowerCase().trim();
+  let user = await User.findOne({ email: normalizedGoogleEmail });
+  if (!user && rawGoogleEmail && rawGoogleEmail !== normalizedGoogleEmail) {
+    user = await User.findOne({ email: rawGoogleEmail });
+  }
   let isNewUser = false;
   if (!user) {
     user = await User.create({
-      email: userInfo.email,
+      email: normalizedGoogleEmail,
       googleId: userInfo.id,
-      username: userInfo.name || userInfo.email?.split("@")[0] || "User",
+      username: userInfo.name || normalizedGoogleEmail?.split("@")[0] || "User",
       disclaimerAccepted: false,
     });
     isNewUser = true;
   } else if (!user.username) {
-    user.username = userInfo.name || userInfo.email?.split("@")[0] || "User";
+    user.username = userInfo.name || normalizedGoogleEmail?.split("@")[0] || "User";
     await user.save();
   }
 
@@ -69,10 +78,16 @@ export async function GET(req) {
 
   const jwt = signToken(user);
 
+  // MITC for first-time Google account creation only (isNewUser means a
+  // brand-new User.create above — never an existing login). Await it here so
+  // mitcMailedToUser=true is set by the mailer only after real SMTP success;
+  // failure keeps the flag false without blocking login.
   if (isNewUser) {
-    sendTermsAndConditionsMail(user.email).catch((err) =>
-      console.error("TERMS MAIL ERROR (GOOGLE, NON-BLOCKING)", err)
-    );
+    try {
+      await sendTermsAndConditionsMail(user.email, { userId: user._id });
+    } catch (err) {
+      console.error("TERMS MAIL ERROR (GOOGLE, NON-BLOCKING)", err?.message || err);
+    }
   }
 
   // ✅ ABSOLUTE URL REQUIRED

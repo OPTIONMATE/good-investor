@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/app/lib/db";
 import User from "@/app/lib/models/User";
-import { sendOtpMail } from "@/app/lib/mailer";
+import { sendOtpMail, sendTermsAndConditionsMail } from "@/app/lib/mailer";
 import { isValidEmail, sanitizeString } from "@/app/lib/validators";
 import { issueOTP, OTP_PURPOSES } from "@/app/lib/otpService";
 
@@ -62,6 +62,10 @@ export async function POST(req) {
     const hash = await bcrypt.hash(password, 10);
 
     let user;
+    // True only when a brand-new account document is created below.
+    // An existing (even unverified) account re-submitting registration
+    // must NOT trigger another MITC email on its own.
+    let isNewAccount = false;
     if (existingUser) {
       // Unverified user re-registering — update their details
       existingUser.password = hash;
@@ -77,6 +81,7 @@ export async function POST(req) {
         role: "user",
         emailVerified: false,
       });
+      isNewAccount = true;
     }
 
     // Issue a REGISTRATION OTP (isolated from other OTP purposes).
@@ -96,6 +101,18 @@ export async function POST(req) {
         { error: "Failed to send verification email. Please try again or use a different email address." },
         { status: 502 }
       );
+    }
+
+    // MITC (Terms & Conditions) for first-time account creation only.
+    // Awaited (non-blocking for OTP — OTP was already sent above) so the
+    // mailer marks mitcMailedToUser=true only after real SMTP success.
+    // MITC failure must NOT break registration; the flag simply stays false.
+    if (isNewAccount) {
+      try {
+        await sendTermsAndConditionsMail(normalizedEmail, { userId: user._id });
+      } catch (err) {
+        console.error("MITC MAIL ERROR (REGISTER, NON-BLOCKING)", err?.message || err);
+      }
     }
 
     // Return step indicator — frontend switches to OTP entry

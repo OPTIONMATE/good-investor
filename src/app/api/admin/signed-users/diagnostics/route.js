@@ -47,13 +47,34 @@ export async function GET(req) {
         user = await User.findOne({ email: emailKey }).lean();
       }
 
-      // Look for matching payment
+      // Look for matching payment: exact link first, legacy lookup after.
+      // The exact link is authoritative only when the payment belongs to the
+      // same user/email as the agreement.
       let payment = null;
-      if (mongoose.Types.ObjectId.isValid(String(agreement.userId))) {
-        payment = await Payment.findOne({ userId: agreement.userId }).lean();
+      if (
+        agreement.paymentId &&
+        mongoose.Types.ObjectId.isValid(String(agreement.paymentId))
+      ) {
+        const candidate = await Payment.findById(agreement.paymentId).lean();
+        if (candidate) {
+          const candidateUserId = candidate.userId ? String(candidate.userId) : "";
+          const candidateEmail = candidate.email
+            ? String(candidate.email).toLowerCase().trim()
+            : "";
+          const agreementOwnerId = String(agreement.userId || "");
+          const sameOwner =
+            (candidateUserId && agreementOwnerId && candidateUserId === agreementOwnerId) ||
+            (candidateEmail && emailKey && candidateEmail === emailKey);
+          payment = sameOwner ? candidate : null;
+        }
       }
-      if (!payment && emailKey) {
-        payment = await Payment.findOne({ email: emailKey }).lean();
+      if (!payment) {
+        if (mongoose.Types.ObjectId.isValid(String(agreement.userId))) {
+          payment = await Payment.findOne({ userId: agreement.userId }).lean();
+        }
+        if (!payment && emailKey) {
+          payment = await Payment.findOne({ email: emailKey }).lean();
+        }
       }
 
       // Analyze gaps

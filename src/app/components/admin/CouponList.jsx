@@ -206,7 +206,7 @@ export default function CouponList() {
             setEditingCoupon(null);
             setShowForm(true);
           }}
-          className="px-4 py-2 bg-gradient-to-r from-lime-500 to-lime-600 text-white font-semibold rounded-lg hover:from-lime-600 hover:to-lime-700 transition-colors flex items-center gap-2 cursor-pointer"
+          className="px-4 py-2 bg-linear-to-r from-lime-500 to-lime-600 text-white font-semibold rounded-lg hover:from-lime-600 hover:to-lime-700 transition-colors flex items-center gap-2 cursor-pointer"
         >
           <Plus size={18} /> Create Coupon
         </button>
